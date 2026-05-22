@@ -3,400 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokerLeague Pro - Tournament Manager</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>PokerLeague Pro - Elite TV Table Clock</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #06090e;
-            --card-bg: rgba(13, 20, 30, 0.75);
-            --border-color: rgba(255, 215, 0, 0.15);
-            --primary-gold: #ffd700;
-            --primary-gold-glow: rgba(255, 215, 0, 0.4);
-            --text-main: #f0f4f8;
-            --text-muted: #6c7a89;
-            --neon-blue: #00f2fe;
-            --neon-red: #ff0844;
+            /* 顶级赛事高级色彩系统 - 玻璃拟态与冷暖光 */
+            --bg-deep: #0A0804;
+            --bg-spotlight: #1E1206; /* 深棕金聚光灯 */
+            
+            /* 玻璃拟态卡片背景 */
+            --glass-panel: rgba(28, 22, 12, 0.82);
+            --glass-card: rgba(255, 220, 120, 0.05);
+            --glass-card-hover: rgba(255, 220, 120, 0.12);
+            
+            /* 边框与高光 */
+            --border-light: rgba(200, 160, 60, 0.22);
+            --gold-highlight: rgba(212, 175, 55, 0.6);
+            --gold-text: #E5C158;
+            --gold-glow: rgba(229, 193, 88, 0.3);
+            
+            /* 字体颜色 */
+            --text-main: #ffffff;
+            --text-muted: #8e9aab;
+            
+            /* 状态色 */
+            --danger-red: #ff3b30;
+            --break-green: #00e676;
+            --ice-blue: #00e5ff;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
+            font-family: 'Montserrat', sans-serif;
             color: var(--text-main);
             height: 100vh;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            /* 霓虹背景光效 */
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 242, 254, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(255, 8, 68, 0.05) 0%, transparent 40%);
+            position: relative;
+            background-color: var(--bg-deep);
+            /* 🏆 顶级决赛桌舞台聚光灯背景 */
+            background-image:
+                radial-gradient(ellipse 80% 50% at 50% -5%, rgba(80,52,8,0.7) 0%, transparent 65%),
+                radial-gradient(ellipse 30% 80% at 0% 50%,   rgba(60,38,6,0.5) 0%, transparent 60%),
+                radial-gradient(ellipse 30% 80% at 100% 50%, rgba(60,38,6,0.5) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 50% 100%, rgba(30,18,4,0.8) 0%, transparent 70%);
         }
 
-        /* 顶部导航与赛事标签 */
+        /* 顶部导航与Logo */
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-            background: rgba(6, 9, 14, 0.8);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 40px;
+            background: rgba(14, 10, 4, 0.92);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid rgba(200,160,60,0.3);
+            z-index: 10;
         }
 
-        .logo-zone {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo-icon {
-            color: var(--primary-gold);
-            font-size: 24px;
-            font-weight: 900;
-            text-shadow: 0 0 10px var(--primary-gold-glow);
-        }
-
-        .logo-text {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            background: linear-gradient(135deg, #fff 0%, var(--primary-gold) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .nav-tabs {
-            display: flex;
-            gap: 8px;
-        }
-
+        .logo-text { font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 900; letter-spacing: 4px; color: #fff; text-shadow: 0 0 15px var(--gold-glow); }
+        .logo-text span { color: var(--gold-text); }
+        
+        .nav-tabs { display: flex; gap: 10px; }
         .tab-btn {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.05);
-            color: var(--text-muted);
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); color: var(--text-muted);
+            padding: 10px 24px; border-radius: 30px; cursor: pointer; font-weight: 600; font-size: 13px; letter-spacing: 1px; transition: all 0.3s;
         }
+        .tab-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .tab-btn.active { background: var(--gold-text); color: #000; border-color: var(--gold-text); box-shadow: 0 0 20px var(--gold-glow); }
 
-        .tab-btn.active, .tab-btn:hover {
-            border-color: var(--primary-gold);
-            color: var(--primary-gold);
-            background: rgba(255, 215, 0, 0.05);
-            text-shadow: 0 0 8px var(--primary-gold-glow);
-        }
-
-        /* 核心三栏式大屏布局 */
         main {
-            flex: 1;
-            display: grid;
-            grid-template-columns: 320px 1fr 350px;
-            gap: 20px;
-            padding: 20px;
-            height: calc(100vh - 70px);
+            flex: 1; display: grid; grid-template-columns: 340px 1fr 360px; gap: 25px;
+            padding: 25px; height: calc(100vh - 70px); position: relative; z-index: 1;
         }
 
-        /* 通用面板样式 */
+        /* 磨砂玻璃高级面板 (彻底告别全黑) */
         .panel {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 16px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            background: linear-gradient(160deg, rgba(42,30,10,0.88) 0%, rgba(22,16,6,0.92) 100%);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(200,160,60,0.28);
+            border-top: 1px solid rgba(220,180,80,0.45);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex; flex-direction: column;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,210,80,0.08), 0 0 0 1px rgba(0,0,0,0.4);
         }
 
         .panel-title {
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--text-muted);
-            margin-bottom: 15px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 13px; text-transform: uppercase; letter-spacing: 3px; color: var(--text-muted);
+            margin-bottom: 20px; font-weight: 800; display: flex; align-items: center; gap: 10px;
         }
+        .panel-title::before { content: ''; display: block; width: 6px; height: 18px; background: var(--gold-text); border-radius: 4px; box-shadow: 0 0 10px var(--gold-glow); }
 
-        .panel-title::before {
-            content: '';
-            display: inline-block;
-            width: 4px;
-            height: 14px;
-            background: var(--primary-gold);
-            border-radius: 2px;
-            box-shadow: 0 0 8px var(--primary-gold);
-        }
-
-        /* 左侧栏：盲注级别列表 */
-        .level-list {
-            overflow-y: auto;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding-right: 5px;
-        }
-
+        /* 左侧：结构滚动区 */
+        .level-list { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 8px; padding-right: 5px; }
         .level-item {
-            display: grid;
-            grid-template-columns: 40px 1fr 60px;
-            align-items: center;
-            padding: 12px 15px;
-            background: rgba(255,255,255,0.02);
-            border-radius: 8px;
-            border: 1px solid transparent;
-            transition: all 0.3s;
+            display: grid; grid-template-columns: 50px 1fr 60px; align-items: center;
+            padding: 14px 16px; background: rgba(40,28,8,0.55); border: 1px solid rgba(160,120,40,0.15);
+            border-radius: 12px; cursor: pointer; transition: all 0.2s;
         }
-
+        .level-item:hover { background: var(--glass-card-hover); }
         .level-item.active {
-            background: rgba(255, 215, 0, 0.08);
-            border-color: rgba(255, 215, 0, 0.3);
+            background: linear-gradient(90deg, rgba(212,175,55,0.15) 0%, rgba(212,175,55,0.02) 100%);
+            border: 1px solid var(--gold-highlight);
+            border-left: 4px solid var(--gold-text);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        .level-item.break { background: rgba(0, 230, 118, 0.05); }
+        .level-item.break.active { border-color: rgba(0, 230, 118, 0.4); border-left: 4px solid var(--break-green); }
+
+        .lvl-num { font-size: 13px; font-weight: 800; color: var(--text-muted); }
+        .level-item.active .lvl-num { color: var(--gold-text); }
+        .level-item.break.active .lvl-num { color: var(--break-green); }
+        .lvl-blinds { font-size: 16px; color: #fff; font-family: 'Orbitron', sans-serif; font-weight: 700; letter-spacing: 1px;}
+        .lvl-time { font-size: 12px; color: var(--text-muted); text-align: right; font-weight: 600; }
+
+        /* 中间核心大屏 */
+        .center-content { display: flex; flex-direction: column; justify-content: space-between; }
+        .main-display-card { 
+            flex: 1; justify-content: space-between; 
+            background: radial-gradient(ellipse 70% 55% at 50% 35%, rgba(55,38,10,0.75) 0%, rgba(18,12,4,0.95) 100%);
+            border-top: 1px solid rgba(220,180,80,0.5);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.7), inset 0 0 60px rgba(180,120,20,0.06), 0 0 0 1px rgba(0,0,0,0.5);
         }
 
-        .level-item.active .lvl-num { color: var(--primary-gold); }
-        .level-item.active .lvl-blinds { color: #fff; font-weight: 700; }
-
-        .lvl-num { font-size: 13px; color: var(--text-muted); font-weight: bold; }
-        .lvl-blinds { font-size: 16px; color: #cbd5e1; }
-        .lvl-time { font-size: 13px; color: var(--text-muted); text-align: right; }
-
-        /* 中间核心：超大计时器与当前盲注 */
-        .center-content {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            gap: 20px;
-        }
-
-        .main-display-card {
-            flex: 1;
-            background: radial-gradient(circle at 50% 40%, rgba(255,215,0,0.03) 0%, transparent 70%), var(--card-bg);
-            border: 1px solid rgba(255, 215, 0, 0.1);
-            position: relative;
-        }
-
-        /* 盲注信息横排 */
-        .blinds-banner {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 20px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.02);
-        }
-
+        .blinds-banner { display: flex; gap: 20px; }
         .blind-block {
-            text-align: center;
+            flex: 1; text-align: center;
+            background: linear-gradient(180deg, rgba(50,36,10,0.7) 0%, rgba(24,16,4,0.85) 100%);
+            border: 1px solid rgba(180,140,50,0.25); border-top: 1px solid rgba(220,180,80,0.35);
+            border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .blind-block.highlight-block { border-color: rgba(212,175,55,0.55); border-top-color: rgba(240,200,80,0.7); background: linear-gradient(180deg, rgba(90,62,10,0.65) 0%, rgba(40,26,4,0.88) 100%); box-shadow: 0 0 24px rgba(200,160,40,0.12); }
+
+        .blind-block label { font-size: 11px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; display: block; margin-bottom: 10px; font-weight: 800; }
+        .blind-block .value { font-size: clamp(30px, 3.5vw, 42px); font-weight: 900; color: #fff; font-family: 'Orbitron', sans-serif; }
+        .blind-block .value.current { color: var(--gold-text); text-shadow: 0 0 20px var(--gold-glow); }
+
+        .timer-zone { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; }
+        #timer { 
+            font-family: 'Orbitron', sans-serif; font-size: clamp(90px, 12vw, 180px); font-weight: 900; color: #fff; 
+            letter-spacing: 6px; cursor: pointer; transition: color 0.3s;
+            text-shadow: 0 0 50px rgba(255,255,255,0.15), 0 10px 20px rgba(0,0,0,0.8);
+        }
+        #timer.break-active { color: var(--break-green); text-shadow: 0 0 50px rgba(0, 230, 118, 0.3), 0 10px 20px rgba(0,0,0,0.8); }
+
+        .ctrl-bar { display: flex; justify-content: center; gap: 15px; }
+        .ctrl-btn { 
+            background: rgba(46,32,8,0.75); border: 1px solid rgba(180,140,50,0.3); color: #fff;
+            padding: 14px 28px; border-radius: 12px; font-weight: 800; letter-spacing: 1px; cursor: pointer; transition: all 0.2s; font-size: 13px;
+            backdrop-filter: blur(5px);
+        }
+        .ctrl-btn:hover { background: rgba(70,50,12,0.9); border-color: rgba(220,180,70,0.5); transform: translateY(-2px); }
+        .ctrl-btn.primary { 
+            background: linear-gradient(135deg, #E5C158 0%, #B89020 100%); color: #000; border: none; 
+            box-shadow: 0 10px 20px var(--gold-glow); 
         }
 
-        .blind-block label {
-            font-size: 12px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .blind-block .value {
-            font-size: 36px;
-            font-weight: 800;
-            color: #fff;
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        .blind-block .value.current {
-            color: var(--primary-gold);
-            text-shadow: 0 0 15px rgba(255,215,0,0.3);
-        }
-
-        /* 绝对的核心：超大倒计时 */
-        .timer-zone {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        #timer {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(80px, 10vw, 150px);
-            font-weight: 900;
-            color: #fff;
-            line-height: 1;
-            letter-spacing: 2px;
-            text-shadow: 0 0 30px rgba(255,255,255,0.1);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        #timer:active {
-            transform: scale(0.98);
-        }
-
-        /* 极其内敛高级的控制按钮组（悬浮或底栏感） */
-        .ctrl-bar {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .ctrl-btn {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.08);
-            color: #fff;
-            padding: 12px 28px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .ctrl-btn:hover {
-            background: rgba(255,255,255,0.08);
-            border-color: #fff;
-        }
-
-        .ctrl-btn.primary {
-            background: var(--primary-gold);
-            color: #000;
-            border: none;
-            box-shadow: 0 0 20px rgba(255,215,0,0.3);
-        }
-
-        .ctrl-btn.primary:hover {
-            background: #ffe240;
-            box-shadow: 0 0 25px rgba(255,215,0,0.5);
-        }
-
-        /* 右侧栏：专业数据看板组 */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            flex: 1;
-        }
-
+        /* 右侧看板 */
+        .stats-grid { display: flex; flex-direction: column; gap: 16px; flex: 1; }
         .stat-card {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255,255,255,0.02);
-            border-radius: 12px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
+            background: linear-gradient(145deg, rgba(52,38,12,0.82) 0%, rgba(26,18,4,0.92) 100%);
+            border: 1px solid rgba(180,140,50,0.28);
+            border-top: 1px solid rgba(220,180,80,0.42);
+            border-left: 3px solid rgba(200,160,60,0.5);
+            border-radius: 16px; padding: 20px; position: relative; overflow: hidden;
+            box-shadow: inset 0 1px 0 rgba(255,210,80,0.06), 0 8px 24px rgba(0,0,0,0.4);
         }
+        .stat-card::after { content:''; position:absolute; top:0; left:0; width:100%; height:40%; background: linear-gradient(180deg, rgba(255,200,60,0.04) 0%, transparent 100%); pointer-events: none;}
+        
+        .stat-label { font-size: 11px; color: var(--text-muted); letter-spacing: 1.5px; font-weight: 800; text-transform: uppercase; display: block; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;}
+        .stat-value { font-family: 'Orbitron', sans-serif; font-size: 32px; font-weight: 900; color: #fff; }
+        .stat-value.gold { color: var(--gold-text); }
+        .stat-value.blue { color: var(--ice-blue); }
 
-        .stat-card::after {
-            content: '♠';
-            position: absolute;
-            right: 15px;
-            bottom: -10px;
-            font-size: 70px;
-            color: rgba(255,255,255,0.01);
-            font-family: serif;
-            pointer-events: none;
+        .chips-input { 
+            background: rgba(30,20,4,0.8); border: 1px solid rgba(180,140,50,0.35); border-radius: 10px; 
+            padding: 12px 16px; color: var(--gold-text); font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 900; width: 100%; 
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.6); transition: border 0.3s;
         }
+        .chips-input:focus { outline: none; border-color: var(--gold-text); box-shadow: inset 0 4px 10px rgba(0,0,0,0.6), 0 0 15px var(--gold-glow); }
 
-        .stat-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
+        .stepper-row { display: flex; justify-content: space-between; align-items: center; }
+        .stepper-ctrls { display: flex; gap: 8px; }
+        .step-btn { 
+            background: rgba(46,32,8,0.75); border: 1px solid rgba(180,140,50,0.28); color: #fff;
+            width: 44px; height: 44px; border-radius: 12px; font-size: 20px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; 
         }
+        .step-btn:hover { background: rgba(255,255,255,0.15); }
 
-        .stat-value {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 28px;
-            font-weight: 700;
-            color: #fff;
+        .btn-eliminate-giant { 
+            background: linear-gradient(135deg, rgba(255,59,48,0.8) 0%, rgba(200,20,10,0.9) 100%); border: 1px solid rgba(255,100,100,0.3); color: #fff; 
+            font-size: 13px; font-weight: 800; letter-spacing: 2px; height: 50px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; 
+            box-shadow: 0 8px 20px rgba(255,59,48,0.3); margin-top: 15px; transition: transform 0.1s; width: 100%; text-transform: uppercase;
         }
+        .btn-eliminate-giant:active { transform: scale(0.97); }
 
-        .stat-value.gold { color: var(--primary-gold); }
-        .stat-value.blue { color: var(--neon-blue); }
-
-        .stat-controls {
-            display: flex;
-            gap: 5px;
-            margin-top: 8px;
+        /* 弹窗高级毛玻璃质感 */
+        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); z-index: 100; display: none; justify-content: center; align-items: center; padding: 40px; }
+        .modal-content { 
+            background: linear-gradient(160deg, rgba(42,28,8,0.97) 0%, rgba(20,14,4,0.99) 100%); border: 1px solid rgba(200,160,60,0.35); border-top: 1px solid rgba(220,180,80,0.6); border-radius: 24px; width: 100%; max-width: 850px; max-height: 85%; display: flex; flex-direction: column; padding: 35px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); 
         }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
+        .modal-header h3 { font-family: 'Orbitron', sans-serif; color: #fff; font-size: 18px; letter-spacing: 2px; }
+        .close-modal { background: transparent; border: none; color: var(--text-muted); font-size: 28px; cursor: pointer; transition: color 0.2s; }
+        .close-modal:hover { color: #fff; }
 
-        .sub-btn {
-            background: rgba(255,255,255,0.05);
-            border: none;
-            color: var(--text-main);
-            width: 28px;
-            height: 24px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
+        .modal-scroll-area { overflow-y: auto; flex: 1; margin-bottom: 20px; padding-right: 15px; }
+        
+        .modal-level-row {
+            display: grid; grid-template-columns: 50px 1fr 1fr 1fr 1fr auto auto; gap: 15px; align-items: center;
+            background: rgba(40,28,8,0.6); padding: 16px 20px; border-radius: 16px; margin-bottom: 12px;
+            border: 1px solid rgba(180,140,50,0.18); transition: background 0.2s;
         }
+        .modal-level-row:hover { background: rgba(60,44,12,0.75); }
+        .modal-level-row.break-row {
+            grid-template-columns: 50px 3fr 1fr auto auto; background: rgba(0,60,24,0.35); border: 1px solid rgba(0,200,100,0.25);
+        }
+        .modal-row-label { font-size: 15px; font-weight: 900; color: var(--text-muted); }
+        
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 1px;}
+        .form-group input { 
+            background: rgba(20,14,4,0.85); border: 1px solid rgba(160,120,40,0.3); padding: 12px; border-radius: 8px; color: #fff; font-family: 'Orbitron', sans-serif; font-size: 16px; transition: border 0.2s;
+        }
+        .form-group input:focus { border-color: var(--gold-text); outline: none; background: rgba(0,0,0,0.6);}
+        
+        .btn-action-group { display: flex; flex-direction: column; gap: 6px; }
+        .btn-move { background: rgba(40,28,8,0.6); border: 1px solid rgba(160,120,40,0.2); color: var(--text-muted); padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
+        .btn-move:hover:not(:disabled) { background: rgba(255,255,255,0.1); color: #fff; }
+        .btn-move:disabled { opacity: 0.2; cursor: not-allowed; }
 
-        .sub-btn:hover { background: rgba(255,255,255,0.15); }
+        .btn-delete-level { background: transparent; border: none; color: var(--danger-red); font-size: 20px; cursor: pointer; padding: 10px; border-radius: 8px; transition: all 0.2s; height: 100%; opacity: 0.7;}
+        .btn-delete-level:hover { opacity: 1; transform: scale(1.1); }
 
-        /* 隐藏滚动条 */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+        .modal-actions { display: flex; gap: 15px; }
+
+
+        /* ── PROGRESS BAR ── */
+        .progress-wrap { width: 100%; height: 4px; background: rgba(255,255,255,0.07); border-radius: 2px; margin: 10px 0 18px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 2px; transition: width 0.8s linear, background 0.5s; background: linear-gradient(90deg, #8B6A10, #E5C158, #FFF0A0); }
+
+        /* ── TIMER WARN STATES (subtle) ── */
+        #timer.warn-60  { color: #EDD97A; text-shadow: 0 0 40px rgba(237,217,122,0.18), 0 10px 20px rgba(0,0,0,0.8); }
+        #timer.warn-30  { color: #E8A87C; text-shadow: 0 0 40px rgba(232,168,124,0.22), 0 10px 20px rgba(0,0,0,0.8); animation: gentlePulse 1.2s ease-in-out infinite alternate; }
+        @keyframes gentlePulse { from { opacity: 1; } to { opacity: 0.82; } }
+
+        /* ── FULLSCREEN BUTTON ── */
+        .fs-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+        .fs-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+        /* ── END TOAST (replaces alert) ── */
+        .end-toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.85); opacity: 0; pointer-events: none; z-index: 999;
+            background: rgba(15,18,25,0.95); border: 1px solid var(--gold-highlight); border-radius: 20px;
+            padding: 40px 60px; text-align: center; transition: all 0.35s cubic-bezier(.34,1.56,.64,1);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.8); }
+        .end-toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: all; }
+        .end-toast h2 { font-family: 'Orbitron', sans-serif; font-size: 28px; color: var(--gold-text); letter-spacing: 4px; margin-bottom: 10px; }
+        .end-toast p  { color: var(--text-muted); font-size: 14px; letter-spacing: 1px; margin-bottom: 24px; }
+        .end-toast button { background: var(--gold-text); color: #000; border: none; padding: 12px 32px; border-radius: 10px; font-weight: 800; font-size: 14px; cursor: pointer; letter-spacing: 1px; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold-text); }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo-zone">
-            <span class="logo-icon">♠</span>
-            <span class="logo-text">POKERLEAGUE PRO</span>
-        </div>
+        <div class="logo-zone"><span class="logo-text">POKER<span>LEAGUE</span> PRO</span></div>
         <div class="nav-tabs">
-            <button class="tab-btn active">赛事大屏</button>
-            <button class="tab-btn">盲注设置</button>
-            <button class="tab-btn">奖金分配</button>
+            <button class="tab-btn active" onclick="switchView('main')">TV 大屏监控</button>
+            <button class="tab-btn" onclick="switchView('blinds')">盲注结构台</button>
+            <button class="fs-btn" onclick="toggleFullscreen()" title="全屏">⛶</button>
         </div>
     </header>
 
     <main>
         <section class="panel">
-            <h2 class="panel-title">盲注级别结构</h2>
-            <div class="level-list" id="levelList">
-                </div>
+            <h2 class="panel-title">Tournament Structure</h2>
+            <div class="level-list" id="levelList"></div>
         </section>
 
         <section class="center-content">
             <div class="panel main-display-card">
                 <div class="blinds-banner">
-                    <div class="blind-block">
-                        <label>当前盲注 Level <span id="currentLevelNum">1</span></label>
+                    <div class="blind-block highlight-block">
+                        <label id="levelLabel">Current Level</label>
                         <div class="value current" id="currentBlindsDisplay">100 / 200</div>
                     </div>
                     <div class="blind-block">
-                        <label>前注 (Ante)</label>
+                        <label>Ante 前注</label>
                         <div class="value" id="currentAnteDisplay">200</div>
                     </div>
                     <div class="blind-block">
-                        <label>下一级别</label>
-                        <div class="value" style="color: var(--text-muted); font-size: 24px; margin-top: 10px;" id="nextBlindsDisplay">200 / 400</div>
+                        <label>Next Level</label>
+                        <div class="value" style="color: var(--text-muted); font-size: 28px; margin-top: 6px;" id="nextBlindsDisplay">200 / 400</div>
                     </div>
                 </div>
 
@@ -404,152 +305,298 @@
                     <div id="timer" onclick="toggleTimer()">20:00</div>
                 </div>
 
+
+                <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:100%"></div></div>
                 <div class="ctrl-bar">
-                    <button class="ctrl-btn" onclick="prevLevel()">◀ 上一级</button>
-                    <button class="ctrl-btn primary" id="startBtn" onclick="toggleTimer()">开始比赛</button>
-                    <button class="ctrl-btn" onclick="resetTimer()">重置</button>
-                    <button class="ctrl-btn" onclick="nextLevel()">下一级 ▶</button>
+                    <button class="ctrl-btn" onclick="prevLevel()">◀ PREV</button>
+                    <button class="ctrl-btn primary" id="startBtn" onclick="toggleTimer()">START CLOCK</button>
+                    <button class="ctrl-btn" onclick="resetTimer()">RESET</button>
+                    <button class="ctrl-btn" onclick="nextLevel()">NEXT ▶</button>
                 </div>
             </div>
         </section>
 
-        <section class="panel">
-            <h2 class="panel-title">赛事数据看板</h2>
-            <div class="stats-grid">
-                
-                <div class="stat-card">
-                    <span class="stat-label">总奖池 (Prize Pot)</span>
-                    <span class="stat-value gold" id="potDisplay">￥0</span>
-                </div>
+        <section class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-label">Starting Stack 初始记分牌</span>
+                <input type="number" class="chips-input" id="startingChipsInput" value="20000" oninput="updateStats()">
+            </div>
 
-                <div class="stat-card">
-                    <span class="stat-label">剩余选手 / 总买入</span>
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span class="stat-value blue" id="playersDisplay">0 / 0</span>
-                        <div class="stat-controls">
-                            <button class="sub-btn" onclick="adjustPlayers(-1)">-</button>
-                            <button class="sub-btn" onclick="adjustPlayers(1)">+</button>
-                        </div>
+            <div class="stat-card">
+                <span class="stat-label">Total Entries 总买入人次</span>
+                <div class="stepper-row">
+                    <span class="stat-value gold" id="totalEntriesDisplay">10</span>
+                    <div class="stepper-ctrls">
+                        <button class="step-btn" onclick="adjustTotalEntries(-1)">-</button>
+                        <button class="step-btn" onclick="adjustTotalEntries(1)">+</button>
                     </div>
                 </div>
+            </div>
 
-                <div class="stat-card">
-                    <span class="stat-label">总筹码量 (Total Chips)</span>
-                    <span class="stat-value">0</span>
+            <div class="stat-card" style="flex: 1;">
+                <span class="stat-label">Players Remaining 存活 / 总计</span>
+                <div class="stepper-row">
+                    <span class="stat-value blue" id="playersDisplay">10 / 10</span>
+                    <div class="stepper-ctrls">
+                        <button class="step-btn" onclick="adjustPlayersRemaining(-1)">-</button>
+                        <button class="step-btn" onclick="adjustPlayersRemaining(1)">+</button>
+                    </div>
                 </div>
+                <button class="btn-eliminate-giant" onclick="eliminatePlayer()">Player Out 淘汰选手</button>
+            </div>
 
-                <div class="stat-card">
-                    <span class="stat-label">平均筹码 (Avg Chips)</span>
-                    <span class="stat-value" id="avgChipsDisplay">0</span>
+            <div class="stat-card">
+                <span class="stat-label">Chips Data 场内筹码概览</span>
+                <div style="display:flex; justify-content: space-between; align-items: baseline;">
+                    <div>
+                        <span style="font-size:11px; color:var(--text-muted); display:block; margin-bottom: 4px;">Total 总量</span>
+                        <span class="stat-value" id="totalChipsDisplay" style="font-size: 24px;">200,000</span>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="font-size:11px; color:var(--text-muted); display:block; margin-bottom: 4px;">Average 均码</span>
+                        <span class="stat-value" id="avgChipsDisplay" style="font-size: 24px;">20,000</span>
+                    </div>
                 </div>
-
             </div>
         </section>
-    </main>
+
+        <div class="modal-overlay" id="blindsModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>BLIND STRUCTURE & BREAKS</h3>
+                    <button class="close-modal" onclick="closeModals()">✕</button>
+                </div>
+                
+                <div class="modal-scroll-area" id="modalBlindsList"></div>
+                
+                <div class="modal-actions">
+                    <button class="ctrl-btn primary" style="flex:1;" onclick="addNewLevel(false)">+ ADD LEVEL 新增级别</button>
+                    <button class="ctrl-btn" style="flex:1; border-color: var(--break-green); color: var(--break-green);" onclick="addNewLevel(true)">+ ADD BREAK 插入休息</button>
+                </div>
+            </div>
+        </div>
+    
+    <div class="end-toast" id="endToast">
+        <h2>🏆 TOURNAMENT OVER</h2>
+        <p>比赛圆满结束，恭喜所有参赛者！</p>
+        <button onclick="dismissToast()">CLOSE 关闭</button>
+    </div>
+</main>
 
     <script>
-        // 专业的经典盲注结构配置
-        const blindStructure = [
-            { level: 1, small: 100, big: 200, ante: 200, time: 1200 },
-            { level: 2, small: 200, big: 400, ante: 400, time: 1200 },
-            { level: 3, small: 300, big: 600, ante: 600, time: 1200 },
-            { level: 4, small: 400, big: 800, ante: 800, time: 1200 },
-            { level: 5, small: 500, big: 1000, ante: 1000, time: 1200 },
-            { level: 6, small: 600, big: 1200, ante: 1200, time: 1200 },
-            { level: 7, small: 800, big: 1600, ante: 1600, time: 1200 },
-            { level: 8, small: 1000, big: 2000, ante: 2000, time: 1200 }
+        // ── STATE ──────────────────────────────────────────────────
+        let blindStructure = [
+            { isBreak: false, small: 100, big: 200, ante: 200, time: 1200 },
+            { isBreak: false, small: 200, big: 400, ante: 400, time: 1200 },
+            { isBreak: false, small: 300, big: 600, ante: 600, time: 1200 },
+            { isBreak: true,  small: 0,   big: 0,   ante: 0,   time: 600  },
+            { isBreak: false, small: 400, big: 800, ante: 800, time: 1200 },
+            { isBreak: false, small: 500, big: 1000, ante: 1000, time: 1200 }
         ];
 
         let currentLevelIndex = 0;
         let timeLeft = blindStructure[0].time;
         let timerId = null;
+        let playersRemaining = 10;
+        let totalEntries = 10;
 
-        // 赛事基础数据
-        let playersRemaining = 9;
-        let totalEntries = 9;
-        const buyInAmount = 500; // 单次买入金额
-        const startingChips = 20000; // 初始筹码
+        // ── LOCALSTORAGE ────────────────────────────────────────────
+        function saveState() {
+            try {
+                localStorage.setItem('plp_structure', JSON.stringify(blindStructure));
+                localStorage.setItem('plp_entries', totalEntries);
+                localStorage.setItem('plp_players', playersRemaining);
+                localStorage.setItem('plp_chips', document.getElementById('startingChipsInput').value);
+            } catch(e) {}
+        }
 
-        // 初始化渲染
+        function loadState() {
+            try {
+                const s = localStorage.getItem('plp_structure');
+                if (s) blindStructure = JSON.parse(s);
+                const e = localStorage.getItem('plp_entries');
+                if (e) totalEntries = parseInt(e);
+                const p = localStorage.getItem('plp_players');
+                if (p) playersRemaining = parseInt(p);
+                const c = localStorage.getItem('plp_chips');
+                if (c) document.getElementById('startingChipsInput').value = c;
+            } catch(e) {}
+            timeLeft = blindStructure[currentLevelIndex].time;
+        }
+
+        // ── AUDIO ───────────────────────────────────────────────────
+        let audioCtx = null;
+        function getAudioCtx() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            return audioCtx;
+        }
+
+        function beep(freq, duration, vol) {
+            try {
+                const ctx = getAudioCtx();
+                const o = ctx.createOscillator();
+                const g = ctx.createGain();
+                o.connect(g); g.connect(ctx.destination);
+                o.frequency.value = freq;
+                g.gain.setValueAtTime(vol, ctx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                o.start(ctx.currentTime);
+                o.stop(ctx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function playLevelUpSound() {
+            // 三声升盲提示
+            beep(523, 0.18, 0.3);
+            setTimeout(() => beep(659, 0.18, 0.3), 200);
+            setTimeout(() => beep(784, 0.35, 0.4), 400);
+        }
+
+        function playTickSound() {
+            beep(880, 0.08, 0.15);
+        }
+
+        // ── FULLSCREEN ──────────────────────────────────────────────
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // ── TOAST ───────────────────────────────────────────────────
+        function showEndToast() {
+            document.getElementById('endToast').classList.add('show');
+        }
+        function dismissToast() {
+            document.getElementById('endToast').classList.remove('show');
+        }
+
+        // ── PROGRESS BAR ────────────────────────────────────────────
+        function updateProgressBar() {
+            const total = blindStructure[currentLevelIndex].time;
+            const pct = total > 0 ? (timeLeft / total) * 100 : 0;
+            const fill = document.getElementById('progressFill');
+            fill.style.width = pct + '%';
+            // Color shifts as time runs out
+            if (pct < 20) {
+                fill.style.background = 'linear-gradient(90deg, #6B2A10, #C05030, #E8A87C)';
+            } else if (pct < 40) {
+                fill.style.background = 'linear-gradient(90deg, #7A5A10, #D4A030, #EDD97A)';
+            } else {
+                fill.style.background = 'linear-gradient(90deg, #8B6A10, #E5C158, #FFF0A0)';
+            }
+        }
+
+        // ── TIMER WARN COLORS (subtle) ──────────────────────────────
+        function updateTimerColor() {
+            const el = document.getElementById('timer');
+            if (el.classList.contains('break-active')) return;
+            el.classList.remove('warn-60', 'warn-30');
+            if (timeLeft <= 30) el.classList.add('warn-30');
+            else if (timeLeft <= 60) el.classList.add('warn-60');
+        }
+
+        // ── CORE DISPLAY ────────────────────────────────────────────
         function init() {
+            loadState();
             renderLevelList();
             updateDisplay();
             updateStats();
         }
 
-        // 渲染左侧盲注列表
         function renderLevelList() {
             const listEl = document.getElementById('levelList');
-            listEl.innerHTML = blindStructure.map((item, index) => `
-                <div class="level-item ${index === currentLevelIndex ? 'active' : ''}" onclick="selectLevel(${index})">
-                    <span class="lvl-num">L${item.level}</span>
-                    <span class="lvl-blinds">${item.small}/${item.big} (A:${item.ante})</span>
-                    <span class="lvl-time">${item.time / 60}m</span>
-                </div>
-            `).join('');
+            let blindLvlCounter = 0;
+            listEl.innerHTML = blindStructure.map((item, index) => {
+                if (!item.isBreak) blindLvlCounter++;
+                const titleStr = item.isBreak ? "BREAK" : `L${blindLvlCounter}`;
+                const contentStr = item.isBreak ? "中场休息" : `${item.small} / ${item.big}`;
+                const minutesStr = `${Math.floor(item.time / 60)} Min`;
+                return `
+                    <div class="level-item ${index === currentLevelIndex ? 'active' : ''} ${item.isBreak ? 'break' : ''}" onclick="selectLevel(${index})">
+                        <span class="lvl-num">${titleStr}</span>
+                        <span class="lvl-blinds">${contentStr}</span>
+                        <span class="lvl-time">${minutesStr}</span>
+                    </div>`;
+            }).join('');
+            // Auto scroll to active
+            setTimeout(() => {
+                const active = listEl.querySelector('.active');
+                if (active) active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }, 50);
         }
 
-        // 更新中央大屏显示
         function updateDisplay() {
             const current = blindStructure[currentLevelIndex];
-            const next = blindStructure[currentLevelIndex + 1] || { small: '-', big: '-', ante: '-' };
+            const next    = blindStructure[currentLevelIndex + 1];
+            const timerEl = document.getElementById('timer');
 
-            document.getElementById('currentLevelNum').innerText = current.level;
-            document.getElementById('currentBlindsDisplay').innerText = `${current.small} / ${current.big}`;
-            document.getElementById('currentAnteDisplay').innerText = current.ante;
-            
-            if (next.small === '-') {
-                document.getElementById('nextBlindsDisplay').innerText = 'Final Level';
+            if (current.isBreak) {
+                document.getElementById('levelLabel').innerText = "BREAK TIME";
+                document.getElementById('currentBlindsDisplay').innerText = "休息中";
+                document.getElementById('currentAnteDisplay').innerText = "-";
+                timerEl.classList.add('break-active');
+                timerEl.classList.remove('warn-60', 'warn-30');
             } else {
-                document.getElementById('nextBlindsDisplay').innerText = `${next.small} / ${next.big}`;
+                let n = 0;
+                for (let i = 0; i <= currentLevelIndex; i++) { if (!blindStructure[i].isBreak) n++; }
+                document.getElementById('levelLabel').innerText = `LEVEL ${n}`;
+                document.getElementById('currentBlindsDisplay').innerText = `${current.small} / ${current.big}`;
+                document.getElementById('currentAnteDisplay').innerText = current.ante;
+                timerEl.classList.remove('break-active');
+                updateTimerColor();
             }
 
-            // 格式化时间
+            document.getElementById('nextBlindsDisplay').innerText =
+                !next ? "FINAL STAGE" : next.isBreak ? "中场休息" : `${next.small} / ${next.big}`;
+
             const mins = Math.floor(timeLeft / 60).toString().padStart(2, '0');
             const secs = (timeLeft % 60).toString().padStart(2, '0');
-            document.getElementById('timer').innerText = `${mins}:${secs}`;
+            timerEl.innerText = `${mins}:${secs}`;
+
+            updateProgressBar();
         }
 
-        // 更新右侧看板数据
         function updateStats() {
+            const startingChips = parseInt(document.getElementById('startingChipsInput').value) || 0;
             const totalChips = totalEntries * startingChips;
-            const avgChips = playersRemaining > 0 ? Math.round(totalChips / playersRemaining) : 0;
-            const totalPrize = totalEntries * buyInAmount;
-
-            document.getElementById('potDisplay').innerText = `￥${totalPrize.toLocaleString()}`;
-            document.getElementById('playersDisplay').innerText = `${playersRemaining} / ${totalEntries}`;
-            document.getElementById('avgChipsDisplay').innerText = avgChips.toLocaleString();
-            
-            // 顺手更新一下第三张卡片的总筹码量
-            document.querySelectorAll('.stat-value')[2].innerText = totalChips.toLocaleString();
+            const avgChips   = playersRemaining > 0 ? Math.round(totalChips / playersRemaining) : 0;
+            document.getElementById('totalEntriesDisplay').innerText  = totalEntries;
+            document.getElementById('playersDisplay').innerText        = `${playersRemaining} / ${totalEntries}`;
+            document.getElementById('totalChipsDisplay').innerText     = totalChips.toLocaleString();
+            document.getElementById('avgChipsDisplay').innerText       = avgChips.toLocaleString();
+            saveState();
         }
 
-        // 计时器开关
+        // ── TIMER CONTROLS ──────────────────────────────────────────
         function toggleTimer() {
             if (timerId) {
-                clearInterval(timerId);
-                timerId = null;
-                document.getElementById('startBtn').innerText = '恢复比赛';
+                clearInterval(timerId); timerId = null;
+                document.getElementById('startBtn').innerText = 'START CLOCK';
                 document.getElementById('startBtn').classList.add('primary');
             } else {
-                document.getElementById('startBtn').innerText = '暂停';
+                document.getElementById('startBtn').innerText = 'PAUSE CLOCK';
                 document.getElementById('startBtn').classList.remove('primary');
                 timerId = setInterval(() => {
                     if (timeLeft > 0) {
                         timeLeft--;
+                        // Tick sounds
+                        if (timeLeft <= 5 && timeLeft > 0) playTickSound();
                         updateDisplay();
                     } else {
-                        // 升盲逻辑
                         if (currentLevelIndex < blindStructure.length - 1) {
+                            playLevelUpSound();
                             currentLevelIndex++;
                             timeLeft = blindStructure[currentLevelIndex].time;
                             renderLevelList();
                             updateDisplay();
-                            // 播放升盲提示音（可选）
                         } else {
-                            clearInterval(timerId);
-                            timerId = null;
-                            alert('所有盲注级别已结束！');
+                            clearInterval(timerId); timerId = null;
+                            document.getElementById('startBtn').innerText = 'START CLOCK';
+                            document.getElementById('startBtn').classList.add('primary');
+                            showEndToast();
                         }
                     }
                 }, 1000);
@@ -557,56 +604,164 @@
         }
 
         function resetTimer() {
-            clearInterval(timerId);
-            timerId = null;
+            clearInterval(timerId); timerId = null;
             timeLeft = blindStructure[currentLevelIndex].time;
-            document.getElementById('startBtn').innerText = '开始比赛';
+            document.getElementById('startBtn').innerText = 'START CLOCK';
             document.getElementById('startBtn').classList.add('primary');
             updateDisplay();
         }
 
         function nextLevel() {
             if (currentLevelIndex < blindStructure.length - 1) {
-                currentLevelIndex++;
-                timeLeft = blindStructure[currentLevelIndex].time;
-                renderLevelList();
-                updateDisplay();
+                playLevelUpSound();
+                currentLevelIndex++; timeLeft = blindStructure[currentLevelIndex].time;
+                renderLevelList(); updateDisplay();
             }
         }
 
         function prevLevel() {
             if (currentLevelIndex > 0) {
-                currentLevelIndex--;
-                timeLeft = blindStructure[currentLevelIndex].time;
-                renderLevelList();
-                updateDisplay();
+                currentLevelIndex--; timeLeft = blindStructure[currentLevelIndex].time;
+                renderLevelList(); updateDisplay();
             }
         }
 
         function selectLevel(index) {
-            currentLevelIndex = index;
-            timeLeft = blindStructure[index].time;
-            renderLevelList();
-            updateDisplay();
+            currentLevelIndex = index; timeLeft = blindStructure[index].time;
+            renderLevelList(); updateDisplay();
         }
 
-        // 选手数据调整
-        function adjustPlayers(change) {
-            if (change > 0) {
-                // 增加新买入
-                totalEntries++;
-                playersRemaining++;
-            } else {
-                // 淘汰选手
-                if (playersRemaining > 1) {
-                    playersRemaining--;
-                }
-            }
+        // ── PLAYER / ENTRY CONTROLS ─────────────────────────────────
+        function adjustTotalEntries(amount) {
+            totalEntries += amount;
+            if (totalEntries < 1) totalEntries = 1;
             updateStats();
         }
 
-        // 启动项目
+        function adjustPlayersRemaining(amount) {
+            playersRemaining += amount;
+            if (playersRemaining < 1) playersRemaining = 1;
+            if (playersRemaining > totalEntries) totalEntries = playersRemaining;
+            updateStats();
+        }
+
+        function eliminatePlayer() {
+            if (playersRemaining > 1) { playersRemaining--; updateStats(); }
+        }
+
+        // ── BLIND STRUCTURE EDITOR ──────────────────────────────────
+        function renderModalBlinds() {
+            const container = document.getElementById('modalBlindsList');
+            let counter = 0;
+            container.innerHTML = blindStructure.map((item, index) => {
+                if (!item.isBreak) counter++;
+                const moveControls = `
+                    <div class="btn-action-group">
+                        <button class="btn-move" onclick="moveLevel(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲ 上移</button>
+                        <button class="btn-move" onclick="moveLevel(${index}, 1)" ${index === blindStructure.length - 1 ? 'disabled' : ''}>▼ 下移</button>
+                    </div>`;
+                if (item.isBreak) {
+                    return `
+                        <div class="modal-level-row break-row">
+                            <span class="modal-row-label">BREAK</span>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label>休息倒计时时长 (分钟)</label>
+                                <input type="number" value="${Math.floor(item.time / 60)}" oninput="updateBlindData(${index}, 'time', this.value, true)">
+                            </div>
+                            ${moveControls}
+                            <button class="btn-delete-level" onclick="deleteLevel(${index})" title="删除此级别">✕</button>
+                        </div>`;
+                } else {
+                    return `
+                        <div class="modal-level-row">
+                            <span class="modal-row-label">L${counter}</span>
+                            <div class="form-group">
+                                <label>Small 小盲</label>
+                                <input type="number" value="${item.small}" oninput="updateBlindData(${index}, 'small', this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label>Big 大盲</label>
+                                <input type="number" value="${item.big}" oninput="updateBlindData(${index}, 'big', this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label>Ante 前注</label>
+                                <input type="number" value="${item.ante}" oninput="updateBlindData(${index}, 'ante', this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label>Time 时长 (分)</label>
+                                <input type="number" value="${Math.floor(item.time / 60)}" oninput="updateBlindData(${index}, 'time', this.value, true)">
+                            </div>
+                            ${moveControls}
+                            <button class="btn-delete-level" onclick="deleteLevel(${index})" title="删除此级别">✕</button>
+                        </div>`;
+                }
+            }).join('');
+        }
+
+        function moveLevel(index, direction) {
+            if (direction === -1 && index > 0) {
+                [blindStructure[index], blindStructure[index-1]] = [blindStructure[index-1], blindStructure[index]];
+                if (currentLevelIndex === index) currentLevelIndex = index - 1;
+                else if (currentLevelIndex === index - 1) currentLevelIndex = index;
+            } else if (direction === 1 && index < blindStructure.length - 1) {
+                [blindStructure[index], blindStructure[index+1]] = [blindStructure[index+1], blindStructure[index]];
+                if (currentLevelIndex === index) currentLevelIndex = index + 1;
+                else if (currentLevelIndex === index + 1) currentLevelIndex = index;
+            }
+            saveState();
+            renderModalBlinds(); renderLevelList(); updateDisplay();
+        }
+
+        function updateBlindData(index, field, value, isMinutes = false) {
+            let val = parseInt(value) || 0;
+            blindStructure[index][field] = isMinutes ? val * 60 : val;
+            if (index === currentLevelIndex && field === 'time' && !timerId) {
+                timeLeft = blindStructure[index][field];
+            }
+            saveState();
+            renderLevelList(); updateDisplay();
+        }
+
+        function addNewLevel(isBreakMode) {
+            if (isBreakMode) {
+                blindStructure.push({ isBreak: true, small: 0, big: 0, ante: 0, time: 600 });
+            } else {
+                let last = [...blindStructure].reverse().find(x => !x.isBreak) || { small: 100, big: 200, ante: 200, time: 1200 };
+                blindStructure.push({ isBreak: false, small: last.small * 2, big: last.big * 2, ante: last.big * 2, time: last.time });
+            }
+            saveState();
+            renderModalBlinds(); renderLevelList(); updateDisplay();
+        }
+
+        function deleteLevel(index) {
+            if (blindStructure.length <= 1) { return; }
+            blindStructure.splice(index, 1);
+            if (currentLevelIndex >= blindStructure.length) currentLevelIndex = blindStructure.length - 1;
+            if (!timerId) timeLeft = blindStructure[currentLevelIndex].time;
+            saveState();
+            renderModalBlinds(); renderLevelList(); updateDisplay();
+        }
+
+        function switchView(view) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('blindsModal').style.display = 'none';
+            if (view === 'main') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            } else if (view === 'blinds') {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('blindsModal').style.display = 'flex';
+                renderModalBlinds();
+            }
+        }
+
+        function closeModals() {
+            document.getElementById('blindsModal').style.display = 'none';
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        }
+
         init();
+
     </script>
 </body>
 </html>
