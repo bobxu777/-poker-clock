@@ -189,7 +189,7 @@ body.theme-wsop { background-image:
     radial-gradient(ellipse 30% 80% at 0% 50%,  rgba(100,14,4,0.35) 0%, transparent 60%),
     radial-gradient(ellipse 30% 80% at 100% 50%,rgba(100,14,4,0.35) 0%, transparent 60%),
     radial-gradient(ellipse 60% 35% at 50% 100%,rgba(60,10,2,0.65) 0%, transparent 70%),
-    linear-gradient(rgba(10,3,2,0.36), rgba(10,3,2,0.36)),
+    linear-gradient(rgba(10,3,2,0.15), rgba(10,3,2,0.15)),
     url('https://raw.githubusercontent.com/bobxu777/-poker-clock/main/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260603111751_208_154.jpg');
     background-size: auto, auto, auto, auto, auto, cover;
     background-position: center, center, center, center, center, center 50%;
@@ -199,7 +199,7 @@ body.theme-triton { background-image:
     radial-gradient(ellipse 40% 60% at 50% 110%, rgba(0,60,100,0.18) 0%, transparent 60%),
     radial-gradient(ellipse 20% 80% at 0% 50%,   rgba(0,40,80,0.10) 0%, transparent 60%),
     radial-gradient(ellipse 20% 80% at 100% 50%,  rgba(0,40,80,0.10) 0%, transparent 60%),
-    linear-gradient(rgba(2,5,12,0.34), rgba(2,5,12,0.34)),
+    linear-gradient(rgba(2,5,12,0.15), rgba(2,5,12,0.15)),
     url('https://raw.githubusercontent.com/bobxu777/-poker-clock/main/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260603111523_87_45.png');
     background-size: auto, auto, auto, auto, auto, cover;
     background-position: center, center, center, center, center, center 50%;
@@ -215,7 +215,7 @@ body.theme-wpt { background-image:
     radial-gradient(ellipse 35% 80% at 5% 50%,  rgba(5,40,160,0.30) 0%, transparent 60%),
     radial-gradient(ellipse 35% 80% at 95% 50%, rgba(5,40,160,0.30) 0%, transparent 60%),
     radial-gradient(ellipse 60% 30% at 50% 100%,rgba(3,20,80,0.65)  0%, transparent 70%),
-    linear-gradient(rgba(3,7,20,0.34), rgba(3,7,20,0.34)),
+    linear-gradient(rgba(3,7,20,0.15), rgba(3,7,20,0.15)),
     url('https://raw.githubusercontent.com/bobxu777/-poker-clock/main/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260603111756_209_154.jpg');
     background-size: auto, auto, auto, auto, auto, cover;
     background-position: center, center, center, center, center, center 50%;
@@ -227,7 +227,7 @@ body.theme-chaos {
         radial-gradient(ellipse 38% 28% at 88% 22%, rgba(0,200,255,0.26) 0%, transparent 55%),
         radial-gradient(ellipse 32% 28% at 65% 82%, rgba(150,0,255,0.24) 0%, transparent 55%),
         radial-gradient(ellipse 40% 22% at 18% 78%, rgba(255,130,0,0.20) 0%, transparent 55%),
-        linear-gradient(rgba(8,2,18,0.32), rgba(8,2,18,0.32)),
+        linear-gradient(rgba(8,2,18,0.15), rgba(8,2,18,0.15)),
         url('https://raw.githubusercontent.com/bobxu777/-poker-clock/main/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260603111710_205_154.jpg');
     background-size: auto, auto, auto, auto, auto, cover;
     background-position: center, center, center, center, center, center 40%;
@@ -294,7 +294,6 @@ header {
     display: flex; justify-content: space-between; align-items: center;
     padding: 12px 30px;
     background: var(--c-header);
-    backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--c-header-border);
     z-index: 10; position: relative;
     flex-shrink: 0;
@@ -355,7 +354,6 @@ main {
 ════════════════════════════════════════ */
 .panel {
     background: linear-gradient(160deg, var(--c-panel-from) 0%, var(--c-panel-to) 100%);
-    backdrop-filter: blur(24px);
     border: 1px solid var(--c-border);
     border-top: 1px solid var(--c-border-top);
     border-radius: 18px;
@@ -561,7 +559,8 @@ body.theme-chaos .ctrl-btn.primary { color: #000; animation: chaosBtnPulse 2s ea
     z-index: 100; display: none; justify-content: center; align-items: center; padding: 30px;
 }
 .modal-content {
-    background: linear-gradient(160deg, var(--c-panel-from) 0%, var(--c-panel-to) 100%);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--c-panel-from), transparent 0%) 0%, color-mix(in srgb, var(--c-panel-to), transparent 0%) 100%);
+    backdrop-filter: blur(20px);
     border: 1px solid var(--c-border); border-top: 1px solid var(--c-border-top);
     border-radius: 22px; width: 100%; max-width: 860px; max-height: 88%; display: flex; flex-direction: column;
     padding: 30px; box-shadow: 0 50px 100px rgba(0,0,0,0.9);
