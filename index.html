@@ -1111,9 +1111,10 @@ function initBroadcastChannel() {
 
 function broadcastState() {
     if (IS_DISPLAY_MODE) return;
-    const p = buildStatePacket();
-    if (broadcastCh) broadcastCh.postMessage(JSON.stringify(p));
-    if (peerConn && peerConn.open) { try { peerConn.send(JSON.stringify(p)); } catch(_) {} }
+    const p = JSON.stringify(buildStatePacket());
+    if (broadcastCh) broadcastCh.postMessage(p);
+    if (peerConn && peerConn.open) { try { peerConn.send(p); } catch(_) {} }
+    sendToPresentationConn(p);
 }
 
 function buildStatePacket() {
@@ -1136,6 +1137,89 @@ function applyRemoteState(s) {
     updateTVDisplay();
 }
 
+/* ════════════════════════════════════════════════════════════
+   Presentation API — 一键搜索电视（Chromecast / 安卓TV）
+════════════════════════════════════════════════════════════ */
+let presentationConn = null;
+let presentationReq  = null;
+
+function initPresentationAPI() {
+    if (!('PresentationRequest' in window) || IS_FILE_PROTO) return false;
+    const displayUrl = `${location.origin}${location.pathname}?mode=display`;
+    presentationReq = new PresentationRequest([displayUrl]);
+
+    // 监听可用性，有设备时高亮投屏按钮
+    presentationReq.getAvailability().then(avail => {
+        updateCastBtnAvail(avail.value);
+        avail.onchange = () => updateCastBtnAvail(avail.value);
+    }).catch(() => {});
+
+    return true;
+}
+
+function updateCastBtnAvail(available) {
+    const btn = document.getElementById('castBtn');
+    if (!btn) return;
+    btn.title = available ? '发现附近设备，点击投屏' : '投屏（需 Chromecast 或安卓TV）';
+}
+
+async function startPresentationCast() {
+    if (!presentationReq) return false;
+    try {
+        const conn = await presentationReq.start();
+        presentationConn = conn;
+        conn.addEventListener('message', () => {});
+        conn.addEventListener('close', () => {
+            presentationConn = null;
+            setCastConnected(false);
+        });
+        // 等待 display 端加载完成后推送状态
+        setTimeout(() => {
+            sendToPresentationConn(JSON.stringify(buildStatePacket()));
+            setCastConnected(true);
+        }, 1800);
+        // 之后定时推送（Presentation API 无法像 PeerJS 那样双向实时，用轮询补偿）
+        startPresentationSync();
+        return true;
+    } catch(e) {
+        // 用户取消或无设备
+        return false;
+    }
+}
+
+let presentationSyncTimer = null;
+function startPresentationSync() {
+    clearInterval(presentationSyncTimer);
+    presentationSyncTimer = setInterval(() => {
+        if (presentationConn && presentationConn.state === 'connected') {
+            sendToPresentationConn(JSON.stringify(buildStatePacket()));
+        }
+    }, 1000);
+}
+
+function sendToPresentationConn(data) {
+    try { if (presentationConn?.state === 'connected') presentationConn.send(data); } catch(_) {}
+}
+
+// 在 display 模式下接收 Presentation API 消息
+function initPresentationReceiver() {
+    if (!('PresentationReceiver' in navigator)) return;
+    navigator.presentation.receiver?.connectionList.then(list => {
+        list.connections.forEach(conn => setupPresentationReceiverConn(conn));
+        list.onconnectionavailable = e => setupPresentationReceiverConn(e.connection);
+    }).catch(() => {});
+}
+
+function setupPresentationReceiverConn(conn) {
+    conn.onmessage = e => {
+        try { applyRemoteState(JSON.parse(e.data)); } catch(_) {}
+    };
+    showTVConnected();
+    document.getElementById('tvConnBadge').className = 'tv-conn-badge connected';
+    document.getElementById('tvConnText').textContent = 'CAST';
+}
+
+/* ── PeerJS fallback ── */
 function initPeerController() {
     if (typeof Peer === 'undefined') return;
     myRoomId = 'PC-' + Math.random().toString(36).substr(2,5).toUpperCase();
@@ -1154,9 +1238,12 @@ function setCastConnected(ok) {
     const bar = document.getElementById('castStatusBar');
     const txt = document.getElementById('castStatusText');
     const btn = document.getElementById('castBtn');
-    if (!bar) return;
-    if (ok) { bar.className='cast-status-bar connected'; txt.textContent='大屏已连接'; btn?.classList.add('connected'); }
-    else   { bar.className='cast-status-bar waiting';    txt.textContent='等待大屏设备连接...'; btn?.classList.remove('connected'); peerConn=null; }
+    if (bar) {
+        bar.className = ok ? 'cast-status-bar connected' : 'cast-status-bar waiting';
+        txt.textContent = ok ? '大屏已连接 ✓' : '等待大屏设备连接...';
+    }
+    btn?.classList.toggle('connected', ok);
+    if (!ok) peerConn = null;
 }
 
 function initPeerDisplay(roomId) {
@@ -1180,17 +1267,27 @@ function showTVConnected() {
     updateTVDisplay();
 }
 
-function openCastModal() {
+/* ── 投屏按钮点击：优先 Presentation API，失败降级二维码 ── */
+async function openCastModal() {
+    // 先尝试 Presentation API（自动弹出设备选择框）
+    if (presentationReq && !IS_FILE_PROTO) {
+        const ok = await startPresentationCast();
+        if (ok) return;   // 成功启动，不需要弹窗
+        // 用户取消 → 不弹二维码，静默
+        return;
+    }
+    // 降级：弹出二维码 / PeerJS 弹窗
     document.getElementById('castModal').style.display = 'flex';
     if (!peer) initPeerController(); else renderCastModal();
 }
+
 function closeCastModal() { document.getElementById('castModal').style.display='none'; }
 
 function renderCastModal() {
     document.getElementById('castRoomId').textContent = myRoomId || '------';
-    const base = IS_FILE_PROTO ? '' : (location.origin + location.pathname);
+    const base    = IS_FILE_PROTO ? '' : (location.origin + location.pathname);
     const castUrl = IS_FILE_PROTO ? '' : `${base}?mode=display&room=${myRoomId}`;
-    const qrEl = document.getElementById('qrcode');
+    const qrEl    = document.getElementById('qrcode');
     qrEl.innerHTML = '';
     if (!IS_FILE_PROTO && castUrl && typeof QRCode !== 'undefined') {
         new QRCode(qrEl, { text:castUrl, width:170, height:170, colorDark:'#000', colorLight:'#fff', correctLevel:QRCode.CorrectLevel.M });
@@ -1340,7 +1437,12 @@ function init() {
     // 恢复主题
     setTheme(currentTheme);
 
+    // Presentation API 初始化（控制器端）
+    if (!IS_DISPLAY_MODE) initPresentationAPI();
+
     if (IS_DISPLAY_MODE) {
+        // 接收 Presentation API 推送
+        initPresentationReceiver();
         document.getElementById('controllerView').style.display = 'none';
         document.getElementById('displayView').style.display    = 'flex';
         document.body.style.overflow = 'hidden';
