@@ -2,293 +2,797 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>PokerLeague Pro - Elite TV Table Clock</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
     <style>
-        :root {
-            /* 顶级赛事高级色彩系统 - 玻璃拟态与冷暖光 */
-            --bg-deep: #0A0804;
-            --bg-spotlight: #1E1206; /* 深棕金聚光灯 */
-            
-            /* 玻璃拟态卡片背景 */
-            --glass-panel: rgba(28, 22, 12, 0.82);
-            --glass-card: rgba(255, 220, 120, 0.05);
-            --glass-card-hover: rgba(255, 220, 120, 0.12);
-            
-            /* 边框与高光 */
-            --border-light: rgba(200, 160, 60, 0.22);
-            --gold-highlight: rgba(212, 175, 55, 0.6);
-            --gold-text: #E5C158;
-            --gold-glow: rgba(229, 193, 88, 0.3);
-            
-            /* 字体颜色 */
-            --text-main: #ffffff;
-            --text-muted: #8e9aab;
-            
-            /* 状态色 */
-            --danger-red: #ff3b30;
-            --break-green: #00e676;
-            --ice-blue: #00e5ff;
-        }
+/* ════════════════════════════════════════
+   CSS 变量 (主题系统基础)
+════════════════════════════════════════ */
+:root {
+    --c-bg:           #0A0804;
+    --c-accent:       #E5C158;
+    --c-accent-glow:  rgba(229,193,88,0.35);
+    --c-accent2:      #E5C158;
+    --c-panel-from:   rgba(42,30,10,0.88);
+    --c-panel-to:     rgba(22,16,6,0.92);
+    --c-border:       rgba(200,160,60,0.22);
+    --c-border-top:   rgba(220,180,80,0.45);
+    --c-header:       rgba(14,10,4,0.92);
+    --c-header-border:rgba(200,160,60,0.30);
+    --c-stat-from:    rgba(52,38,12,0.82);
+    --c-stat-to:      rgba(26,18,4,0.92);
+    --c-blind-from:   rgba(50,36,10,0.7);
+    --c-blind-to:     rgba(24,16,4,0.85);
+    --c-main-card:    rgba(18,12,4,0.97);
+    --c-main-card-glow: rgba(180,120,20,0.06);
+    --c-stat-left:    rgba(200,160,60,0.5);
+    --text-main:      #ffffff;
+    --text-muted:     #8e9aab;
+    --danger-red:     #ff3b30;
+    --break-green:    #00e676;
+    --ice-blue:       #00e5ff;
+}
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── WSOP ── 深黑+经典金+烈焰红 */
+body.theme-wsop {
+    --c-bg:            #0C0504;
+    --c-accent:        #D4AF37;
+    --c-accent-glow:   rgba(212,175,55,0.4);
+    --c-accent2:       #CC1A0A;
+    --c-panel-from:    rgba(40,12,6,0.92);
+    --c-panel-to:      rgba(18,5,3,0.97);
+    --c-border:        rgba(212,175,55,0.22);
+    --c-border-top:    rgba(212,175,55,0.55);
+    --c-header:        rgba(8,3,2,0.97);
+    --c-header-border: rgba(180,30,16,0.5);
+    --c-stat-from:     rgba(44,14,8,0.88);
+    --c-stat-to:       rgba(20,6,3,0.97);
+    --c-blind-from:    rgba(44,14,8,0.72);
+    --c-blind-to:      rgba(20,6,3,0.9);
+    --c-main-card:     rgba(16,5,3,0.98);
+    --c-main-card-glow:rgba(160,20,10,0.07);
+    --c-stat-left:     rgba(200,30,16,0.6);
+    --text-muted:      #907060;
+}
 
-        body {
-            font-family: 'Montserrat', sans-serif;
-            color: var(--text-main);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            background-color: var(--bg-deep);
-            /* 🏆 顶级决赛桌舞台聚光灯背景 */
-            background-image:
-                radial-gradient(ellipse 80% 50% at 50% -5%, rgba(80,52,8,0.7) 0%, transparent 65%),
-                radial-gradient(ellipse 30% 80% at 0% 50%,   rgba(60,38,6,0.5) 0%, transparent 60%),
-                radial-gradient(ellipse 30% 80% at 100% 50%, rgba(60,38,6,0.5) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 40% at 50% 100%, rgba(30,18,4,0.8) 0%, transparent 70%);
-        }
+/* ── TRITON ── 极黑+冰霜青+铂白 */
+body.theme-triton {
+    --c-bg:            #020406;
+    --c-accent:        #00E5FF;
+    --c-accent-glow:   rgba(0,229,255,0.3);
+    --c-accent2:       #E8EDF2;
+    --c-panel-from:    rgba(4,12,22,0.92);
+    --c-panel-to:      rgba(2,6,14,0.97);
+    --c-border:        rgba(0,200,230,0.14);
+    --c-border-top:    rgba(0,200,230,0.32);
+    --c-header:        rgba(1,3,8,0.98);
+    --c-header-border: rgba(0,200,230,0.2);
+    --c-stat-from:     rgba(4,16,28,0.9);
+    --c-stat-to:       rgba(2,8,16,0.97);
+    --c-blind-from:    rgba(4,16,28,0.72);
+    --c-blind-to:      rgba(2,8,16,0.9);
+    --c-main-card:     rgba(2,6,14,0.99);
+    --c-main-card-glow:rgba(0,150,200,0.05);
+    --c-stat-left:     rgba(0,200,230,0.45);
+    --text-muted:      #3D6070;
+}
 
-        /* 顶部导航与Logo */
-        header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 40px;
-            background: rgba(14, 10, 4, 0.92);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(200,160,60,0.3);
-            z-index: 10;
-        }
+/* ── EPT ── 珍珠白+深海蓝（浅色主题） */
+body.theme-ept {
+    --c-bg:            #EDF2F9;
+    --c-accent:        #1A66B0;
+    --c-accent-glow:   rgba(26,102,176,0.28);
+    --c-accent2:       #0D1B2A;
+    --c-panel-from:    rgba(255,255,255,0.90);
+    --c-panel-to:      rgba(232,240,252,0.96);
+    --c-border:        rgba(26,102,176,0.18);
+    --c-border-top:    rgba(26,102,176,0.35);
+    --c-header:        rgba(255,255,255,0.96);
+    --c-header-border: rgba(26,102,176,0.22);
+    --c-stat-from:     rgba(255,255,255,0.92);
+    --c-stat-to:       rgba(228,238,252,0.97);
+    --c-blind-from:    rgba(220,234,252,0.75);
+    --c-blind-to:      rgba(238,245,255,0.92);
+    --c-main-card:     rgba(240,246,255,0.98);
+    --c-main-card-glow:rgba(26,102,176,0.05);
+    --c-stat-left:     rgba(26,102,176,0.45);
+    --text-main:       #0D1B2A;
+    --text-muted:      #4A6888;
+    --break-green:     #0A7A40;
+    --ice-blue:        #1A66B0;
+}
 
-        .logo-text { font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 900; letter-spacing: 4px; color: #fff; text-shadow: 0 0 15px var(--gold-glow); }
-        .logo-text span { color: var(--gold-text); }
-        
-        .nav-tabs { display: flex; gap: 10px; }
-        .tab-btn {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border-light); color: var(--text-muted);
-            padding: 10px 24px; border-radius: 30px; cursor: pointer; font-weight: 600; font-size: 13px; letter-spacing: 1px; transition: all 0.3s;
-        }
-        .tab-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
-        .tab-btn.active { background: var(--gold-text); color: #000; border-color: var(--gold-text); box-shadow: 0 0 20px var(--gold-glow); }
+/* ── WPT ── 午夜蓝+电光蓝+热金 */
+body.theme-wpt {
+    --c-bg:            #030610;
+    --c-accent:        #1E90FF;
+    --c-accent-glow:   rgba(30,144,255,0.38);
+    --c-accent2:       #D4AF37;
+    --c-panel-from:    rgba(6,14,42,0.9);
+    --c-panel-to:      rgba(3,8,24,0.97);
+    --c-border:        rgba(30,144,255,0.18);
+    --c-border-top:    rgba(30,144,255,0.42);
+    --c-header:        rgba(2,5,16,0.97);
+    --c-header-border: rgba(30,144,255,0.35);
+    --c-stat-from:     rgba(8,20,54,0.88);
+    --c-stat-to:       rgba(4,10,30,0.97);
+    --c-blind-from:    rgba(8,20,54,0.7);
+    --c-blind-to:      rgba(4,10,30,0.9);
+    --c-main-card:     rgba(3,8,24,0.99);
+    --c-main-card-glow:rgba(10,60,200,0.07);
+    --c-stat-left:     rgba(30,144,255,0.5);
+    --text-muted:      #3A5090;
+}
 
-        main {
-            flex: 1; display: grid; grid-template-columns: 340px 1fr 360px; gap: 25px;
-            padding: 25px; height: calc(100vh - 70px); position: relative; z-index: 1;
-        }
+/* ── CHAOS ── 霓虹酒吧 */
+body.theme-chaos {
+    --c-bg:            #0D0820;
+    --c-accent:        #FF2D9B;
+    --c-accent-glow:   rgba(255,45,155,0.5);
+    --c-accent2:       #00E8FF;
+    --c-panel-from:    rgba(38,12,58,0.78);
+    --c-panel-to:      rgba(18,5,35,0.88);
+    --c-border:        rgba(255,45,155,0.25);
+    --c-border-top:    rgba(0,232,255,0.4);
+    --c-header:        rgba(16,6,30,0.94);
+    --c-header-border: rgba(255,45,155,0.4);
+    --c-stat-from:     rgba(40,10,62,0.82);
+    --c-stat-to:       rgba(20,5,38,0.92);
+    --c-blind-from:    rgba(40,10,62,0.65);
+    --c-blind-to:      rgba(20,5,38,0.85);
+    --c-main-card:     rgba(15,4,30,0.95);
+    --c-main-card-glow:rgba(255,45,155,0.06);
+    --c-stat-left:     rgba(0,232,255,0.55);
+    --text-muted:      #9060B8;
+}
 
-        /* 磨砂玻璃高级面板 (彻底告别全黑) */
-        .panel {
-            background: linear-gradient(160deg, rgba(42,30,10,0.88) 0%, rgba(22,16,6,0.92) 100%);
-            backdrop-filter: blur(24px);
-            border: 1px solid rgba(200,160,60,0.28);
-            border-top: 1px solid rgba(220,180,80,0.45);
-            border-radius: 20px;
-            padding: 24px;
-            display: flex; flex-direction: column;
-            box-shadow: 0 24px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,210,80,0.08), 0 0 0 1px rgba(0,0,0,0.4);
-        }
+/* ════════════════════════════════════════
+   RESET & BASE
+════════════════════════════════════════ */
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .panel-title {
-            font-size: 13px; text-transform: uppercase; letter-spacing: 3px; color: var(--text-muted);
-            margin-bottom: 20px; font-weight: 800; display: flex; align-items: center; gap: 10px;
-        }
-        .panel-title::before { content: ''; display: block; width: 6px; height: 18px; background: var(--gold-text); border-radius: 4px; box-shadow: 0 0 10px var(--gold-glow); }
+body {
+    font-family: 'Montserrat', sans-serif;
+    color: var(--text-main);
+    height: 100dvh;
+    overflow: hidden;
+    position: relative;
+    background-color: var(--c-bg);
+    transition: background-color 0.6s ease;
+    padding-top:    env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-left:   env(safe-area-inset-left, 0px);
+    padding-right:  env(safe-area-inset-right, 0px);
+}
 
-        /* 左侧：结构滚动区 */
-        .level-list { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 8px; padding-right: 5px; }
-        .level-item {
-            display: grid; grid-template-columns: 50px 1fr 60px; align-items: center;
-            padding: 14px 16px; background: rgba(40,28,8,0.55); border: 1px solid rgba(160,120,40,0.15);
-            border-radius: 12px; cursor: pointer; transition: all 0.2s;
-        }
-        .level-item:hover { background: var(--glass-card-hover); }
-        .level-item.active {
-            background: linear-gradient(90deg, rgba(212,175,55,0.15) 0%, rgba(212,175,55,0.02) 100%);
-            border: 1px solid var(--gold-highlight);
-            border-left: 4px solid var(--gold-text);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-        .level-item.break { background: rgba(0, 230, 118, 0.05); }
-        .level-item.break.active { border-color: rgba(0, 230, 118, 0.4); border-left: 4px solid var(--break-green); }
+/* ── Theme Backgrounds ── */
+body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    transition: opacity 0.6s ease;
+}
 
-        .lvl-num { font-size: 13px; font-weight: 800; color: var(--text-muted); }
-        .level-item.active .lvl-num { color: var(--gold-text); }
-        .level-item.break.active .lvl-num { color: var(--break-green); }
-        .lvl-blinds { font-size: 16px; color: #fff; font-family: 'Orbitron', sans-serif; font-weight: 700; letter-spacing: 1px;}
-        .lvl-time { font-size: 12px; color: var(--text-muted); text-align: right; font-weight: 600; }
+/* DEFAULT / WSOP-like base (before any theme class) */
+body { background-image:
+    radial-gradient(ellipse 80% 50% at 50% -5%, rgba(80,52,8,0.7) 0%, transparent 65%),
+    radial-gradient(ellipse 30% 80% at 0% 50%,  rgba(60,38,6,0.5) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 80% at 100% 50%,rgba(60,38,6,0.5) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 50% 100%,rgba(30,18,4,0.8) 0%, transparent 70%);
+}
+body.theme-wsop { background-image:
+    radial-gradient(ellipse 80% 50% at 50% -5%, rgba(160,20,8,0.55) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 80% at 0% 50%,  rgba(100,14,4,0.4) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 80% at 100% 50%,rgba(100,14,4,0.4) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 35% at 50% 100%,rgba(60,10,2,0.7) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 20% at 50% 50%, rgba(180,140,0,0.04) 0%, transparent 80%);
+}
+body.theme-triton { background-image:
+    radial-gradient(ellipse 70% 40% at 50% -10%, rgba(0,120,180,0.18) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 50% 110%, rgba(0,60,100,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 20% 80% at 0% 50%,   rgba(0,40,80,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 20% 80% at 100% 50%,  rgba(0,40,80,0.08) 0%, transparent 60%);
+}
+body.theme-ept { background-image:
+    radial-gradient(ellipse 80% 45% at 50% -5%, rgba(91,155,213,0.30) 0%, transparent 65%),
+    radial-gradient(ellipse 35% 70% at 0% 50%,  rgba(91,155,213,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 35% 70% at 100% 50%,rgba(91,155,213,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 30% at 50% 100%,rgba(180,210,240,0.35) 0%, transparent 70%);
+}
+body.theme-wpt { background-image:
+    radial-gradient(ellipse 80% 50% at 50% -5%, rgba(10,60,200,0.38) 0%, transparent 65%),
+    radial-gradient(ellipse 35% 80% at 5% 50%,  rgba(5,40,160,0.28) 0%, transparent 60%),
+    radial-gradient(ellipse 35% 80% at 95% 50%, rgba(5,40,160,0.28) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 30% at 50% 100%,rgba(3,20,80,0.6)  0%, transparent 70%),
+    radial-gradient(ellipse 20% 20% at 50% 50%, rgba(30,144,255,0.04) 0%, transparent 70%);
+}
+body.theme-chaos {
+    background-color: #0D0820;
+    background-image:
+        radial-gradient(ellipse 45% 35% at 12% 18%, rgba(255,30,120,0.28) 0%, transparent 60%),
+        radial-gradient(ellipse 38% 28% at 88% 22%, rgba(0,200,255,0.24) 0%, transparent 55%),
+        radial-gradient(ellipse 32% 28% at 65% 82%, rgba(150,0,255,0.22) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 22% at 18% 78%, rgba(255,130,0,0.18) 0%, transparent 55%),
+        radial-gradient(ellipse 55% 45% at 50% 50%, rgba(60,0,100,0.20) 0%, transparent 70%);
+    animation: chaosBgPulse 8s ease infinite;
+}
+@keyframes chaosBgPulse {
+    0%,100%{ background-color: #0D0820; }
+    25%    { background-color: #100825; }
+    50%    { background-color: #0C0A22; }
+    75%    { background-color: #110720; }
+}
 
-        /* 中间核心大屏 */
-        .center-content { display: flex; flex-direction: column; justify-content: space-between; }
-        .main-display-card { 
-            flex: 1; justify-content: space-between; 
-            background: radial-gradient(ellipse 70% 55% at 50% 35%, rgba(55,38,10,0.75) 0%, rgba(18,12,4,0.95) 100%);
-            border-top: 1px solid rgba(220,180,80,0.5);
-            box-shadow: 0 40px 80px rgba(0,0,0,0.7), inset 0 0 60px rgba(180,120,20,0.06), 0 0 0 1px rgba(0,0,0,0.5);
-        }
+/* ── EPT 浅色主题：覆盖硬编码白色文字 ── */
+body.theme-ept { color: var(--text-main); }
+body.theme-ept header { box-shadow: 0 2px 20px rgba(26,102,176,0.12); }
+body.theme-ept .logo-text { text-shadow: 0 0 20px rgba(26,102,176,0.2); }
+body.theme-ept .panel { box-shadow: 0 12px 40px rgba(26,102,176,0.12), inset 0 1px 0 rgba(255,255,255,0.8); }
+body.theme-ept .panel::after { color: var(--c-accent); }
+body.theme-ept .lvl-blinds,
+body.theme-ept .blind-block .value,
+body.theme-ept #timer:not(.break-active):not(.warn-60):not(.warn-30),
+body.theme-ept #tvTimer:not(.break-active):not(.warn-60):not(.warn-30),
+body.theme-ept .stat-value,
+body.theme-ept .modal-row-label,
+body.theme-ept .modal-header h3,
+body.theme-ept .form-group input,
+body.theme-ept .step-btn,
+body.theme-ept .ctrl-btn { color: var(--c-accent2); }
+body.theme-ept .blind-block .value.current { color: var(--c-accent); }
+body.theme-ept .stat-value.gold { color: var(--c-accent); }
+body.theme-ept .stat-value.blue { color: #1A66B0; }
+body.theme-ept .chips-input { color: var(--c-accent); background: rgba(220,235,252,0.7); }
+body.theme-ept .ctrl-btn { background: rgba(26,102,176,0.08); }
+body.theme-ept .ctrl-btn:hover { background: rgba(26,102,176,0.18); border-color: var(--c-accent); color: var(--c-accent); }
+body.theme-ept .ctrl-btn.primary { color: #fff; }
+body.theme-ept .step-btn { background: rgba(26,102,176,0.08); border-color: rgba(26,102,176,0.25); }
+body.theme-ept .tab-btn.active { color: #fff; }
+body.theme-ept .form-group input { background: rgba(220,235,252,0.7); border-color: rgba(26,102,176,0.25); color: var(--c-accent2); }
+body.theme-ept .modal-content { box-shadow: 0 20px 60px rgba(26,102,176,0.2); }
+body.theme-ept .level-item.active .lvl-blinds,
+body.theme-ept .level-item.active .lvl-time { color: var(--c-accent); }
+body.theme-ept .blinds-banner .blind-block { box-shadow: 0 4px 16px rgba(26,102,176,0.12); }
+body.theme-ept #timer.warn-30 { color: #C0392B; }
+body.theme-ept #timer.warn-60 { color: #E67E22; }
+body.theme-ept .tv-stats-row { background: rgba(255,255,255,0.6); }
+body.theme-ept .tv-blind-block .tv-bval { color: var(--c-accent2); }
+body.theme-ept .tv-blind-block.highlight .tv-bval { color: var(--c-accent); }
+body.theme-ept #tvTimer:not(.break-active) { color: var(--c-accent2); text-shadow: 0 0 60px rgba(26,102,176,0.15); }
+body.theme-ept .bu-main { text-shadow: 0 0 40px rgba(26,102,176,0.4); }
+body.theme-ept .end-toast { background: rgba(237,242,249,0.98); border-color: var(--c-accent); }
+body.theme-ept .end-toast h2 { color: var(--c-accent); }
+body.theme-ept .end-toast p  { color: var(--text-muted); }
 
-        .blinds-banner { display: flex; gap: 20px; }
-        .blind-block {
-            flex: 1; text-align: center;
-            background: linear-gradient(180deg, rgba(50,36,10,0.7) 0%, rgba(24,16,4,0.85) 100%);
-            border: 1px solid rgba(180,140,50,0.25); border-top: 1px solid rgba(220,180,80,0.35);
-            border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .blind-block.highlight-block { border-color: rgba(212,175,55,0.55); border-top-color: rgba(240,200,80,0.7); background: linear-gradient(180deg, rgba(90,62,10,0.65) 0%, rgba(40,26,4,0.88) 100%); box-shadow: 0 0 24px rgba(200,160,40,0.12); }
+/* CHAOS scanlines overlay */
+body.theme-chaos::before {
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.1) 3px, rgba(0,0,0,0.1) 4px);
+    z-index: 1; pointer-events: none;
+}
 
-        .blind-block label { font-size: 11px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; display: block; margin-bottom: 10px; font-weight: 800; }
-        .blind-block .value { font-size: clamp(30px, 3.5vw, 42px); font-weight: 900; color: #fff; font-family: 'Orbitron', sans-serif; }
-        .blind-block .value.current { color: var(--gold-text); text-shadow: 0 0 20px var(--gold-glow); }
+/* ════════════════════════════════════════
+   HEADER
+════════════════════════════════════════ */
+header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 30px;
+    background: var(--c-header);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--c-header-border);
+    z-index: 10; position: relative;
+    flex-shrink: 0;
+    transition: background 0.5s, border-color 0.5s;
+}
+.logo-text { font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 900; letter-spacing: 4px; color: #fff; text-shadow: 0 0 18px var(--c-accent-glow); white-space: nowrap; }
+.logo-text span { color: var(--c-accent); }
+body.theme-chaos .logo-text { animation: chaosText 3s ease infinite; }
+@keyframes chaosText { 0%,100%{color:#FF00FF;} 33%{color:#00FFFF;} 66%{color:#FF8800;} }
 
-        .timer-zone { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; }
-        #timer { 
-            font-family: 'Orbitron', sans-serif; font-size: clamp(90px, 12vw, 180px); font-weight: 900; color: #fff; 
-            letter-spacing: 6px; cursor: pointer; transition: color 0.3s;
-            text-shadow: 0 0 50px rgba(255,255,255,0.15), 0 10px 20px rgba(0,0,0,0.8);
-        }
-        #timer.break-active { color: var(--break-green); text-shadow: 0 0 50px rgba(0, 230, 118, 0.3), 0 10px 20px rgba(0,0,0,0.8); }
+.header-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
 
-        .ctrl-bar { display: flex; justify-content: center; gap: 15px; }
-        .ctrl-btn { 
-            background: rgba(46,32,8,0.75); border: 1px solid rgba(180,140,50,0.3); color: #fff;
-            padding: 14px 28px; border-radius: 12px; font-weight: 800; letter-spacing: 1px; cursor: pointer; transition: all 0.2s; font-size: 13px;
-            backdrop-filter: blur(5px);
-        }
-        .ctrl-btn:hover { background: rgba(70,50,12,0.9); border-color: rgba(220,180,70,0.5); transform: translateY(-2px); }
-        .ctrl-btn.primary { 
-            background: linear-gradient(135deg, #E5C158 0%, #B89020 100%); color: #000; border: none; 
-            box-shadow: 0 10px 20px var(--gold-glow); 
-        }
+/* ── Theme Switcher ── */
+.theme-switcher { display: flex; gap: 4px; }
+.th-btn {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-muted); padding: 6px 12px; border-radius: 20px; cursor: pointer;
+    font-weight: 800; font-size: 11px; letter-spacing: 1.5px; transition: all 0.2s;
+}
+.th-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.th-btn.active { color: #000; border-color: transparent; }
+.th-btn[data-theme="wsop"].active    { background: linear-gradient(135deg, #D4AF37, #CC1A0A); }
+.th-btn[data-theme="triton"].active  { background: #00E5FF; }
+.th-btn[data-theme="ept"].active     { background: #5B9BD5; }
+.th-btn[data-theme="wpt"].active     { background: #1E90FF; }
+.th-btn[data-theme="chaos"].active   { background: linear-gradient(135deg, #FF00FF, #00FFFF); animation: chaosBtnGlow 2s ease infinite; }
+@keyframes chaosBtnGlow { 0%,100%{box-shadow:0 0 12px #FF00FF;} 50%{box-shadow:0 0 18px #00FFFF;} }
+.th-btn[data-theme="chaos"] { color: #FF00FF; border-color: rgba(255,0,255,0.3); }
 
-        /* 右侧看板 */
-        .stats-grid { display: flex; flex-direction: column; gap: 16px; flex: 1; }
-        .stat-card {
-            background: linear-gradient(145deg, rgba(52,38,12,0.82) 0%, rgba(26,18,4,0.92) 100%);
-            border: 1px solid rgba(180,140,50,0.28);
-            border-top: 1px solid rgba(220,180,80,0.42);
-            border-left: 3px solid rgba(200,160,60,0.5);
-            border-radius: 16px; padding: 20px; position: relative; overflow: hidden;
-            box-shadow: inset 0 1px 0 rgba(255,210,80,0.06), 0 8px 24px rgba(0,0,0,0.4);
-        }
-        .stat-card::after { content:''; position:absolute; top:0; left:0; width:100%; height:40%; background: linear-gradient(180deg, rgba(255,200,60,0.04) 0%, transparent 100%); pointer-events: none;}
-        
-        .stat-label { font-size: 11px; color: var(--text-muted); letter-spacing: 1.5px; font-weight: 800; text-transform: uppercase; display: block; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;}
-        .stat-value { font-family: 'Orbitron', sans-serif; font-size: 32px; font-weight: 900; color: #fff; }
-        .stat-value.gold { color: var(--gold-text); }
-        .stat-value.blue { color: var(--ice-blue); }
+.nav-tabs { display: flex; gap: 8px; }
+.tab-btn {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted);
+    padding: 8px 20px; border-radius: 30px; cursor: pointer; font-weight: 600; font-size: 12px; letter-spacing: 1px; transition: all 0.3s;
+}
+.tab-btn:hover  { background: rgba(255,255,255,0.1); color: #fff; }
+.tab-btn.active { background: var(--c-accent); color: #000; border-color: var(--c-accent); box-shadow: 0 0 16px var(--c-accent-glow); }
 
-        .chips-input { 
-            background: rgba(30,20,4,0.8); border: 1px solid rgba(180,140,50,0.35); border-radius: 10px; 
-            padding: 12px 16px; color: var(--gold-text); font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 900; width: 100%; 
-            box-shadow: inset 0 4px 10px rgba(0,0,0,0.6); transition: border 0.3s;
-        }
-        .chips-input:focus { outline: none; border-color: var(--gold-text); box-shadow: inset 0 4px 10px rgba(0,0,0,0.6), 0 0 15px var(--gold-glow); }
+.cast-btn {
+    background: rgba(0,200,255,0.08); border: 1px solid rgba(0,200,255,0.28); color: var(--ice-blue);
+    padding: 7px 15px; border-radius: 24px; cursor: pointer; font-weight: 700; font-size: 12px;
+    letter-spacing: 1px; transition: all 0.3s; display: flex; align-items: center; gap: 5px;
+}
+.cast-btn:hover { background: rgba(0,200,255,0.18); box-shadow: 0 0 14px rgba(0,200,255,0.25); }
+.cast-btn.connected { background: rgba(0,200,100,0.12); border-color: rgba(0,230,118,0.4); color: var(--break-green); }
+.fs-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); padding: 7px 12px; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+.fs-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
 
-        .stepper-row { display: flex; justify-content: space-between; align-items: center; }
-        .stepper-ctrls { display: flex; gap: 8px; }
-        .step-btn { 
-            background: rgba(46,32,8,0.75); border: 1px solid rgba(180,140,50,0.28); color: #fff;
-            width: 44px; height: 44px; border-radius: 12px; font-size: 20px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; 
-        }
-        .step-btn:hover { background: rgba(255,255,255,0.15); }
+/* ════════════════════════════════════════
+   LAYOUT
+════════════════════════════════════════ */
+main {
+    flex: 1; display: grid; grid-template-columns: 300px 1fr 340px; gap: 20px;
+    padding: 20px; min-height: 0; position: relative; z-index: 1;
+}
 
-        .btn-eliminate-giant { 
-            background: linear-gradient(135deg, rgba(255,59,48,0.8) 0%, rgba(200,20,10,0.9) 100%); border: 1px solid rgba(255,100,100,0.3); color: #fff; 
-            font-size: 13px; font-weight: 800; letter-spacing: 2px; height: 50px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; 
-            box-shadow: 0 8px 20px rgba(255,59,48,0.3); margin-top: 15px; transition: transform 0.1s; width: 100%; text-transform: uppercase;
-        }
-        .btn-eliminate-giant:active { transform: scale(0.97); }
+/* ════════════════════════════════════════
+   PANEL
+════════════════════════════════════════ */
+.panel {
+    background: linear-gradient(160deg, var(--c-panel-from) 0%, var(--c-panel-to) 100%);
+    backdrop-filter: blur(24px);
+    border: 1px solid var(--c-border);
+    border-top: 1px solid var(--c-border-top);
+    border-radius: 18px;
+    padding: 20px;
+    display: flex; flex-direction: column;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.04);
+    transition: background 0.5s, border-color 0.5s, box-shadow 0.5s;
+    position: relative; overflow: hidden;
+}
+/* Suit watermark */
+.panel::after {
+    content: '♠'; position: absolute; right: -10px; bottom: -20px;
+    font-size: 120px; color: var(--c-accent); opacity: 0.025;
+    pointer-events: none; line-height: 1; user-select: none;
+    transition: color 0.5s;
+}
+.stats-grid > .stat-card:nth-child(2)::after { content: '♥'; }
+.stats-grid > .stat-card:nth-child(3)::after { content: '♦'; }
+.stats-grid > .stat-card:nth-child(4)::after { content: '♣'; }
 
-        /* 弹窗高级毛玻璃质感 */
-        .modal-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); z-index: 100; display: none; justify-content: center; align-items: center; padding: 40px; }
-        .modal-content { 
-            background: linear-gradient(160deg, rgba(42,28,8,0.97) 0%, rgba(20,14,4,0.99) 100%); border: 1px solid rgba(200,160,60,0.35); border-top: 1px solid rgba(220,180,80,0.6); border-radius: 24px; width: 100%; max-width: 850px; max-height: 85%; display: flex; flex-direction: column; padding: 35px; box-shadow: 0 50px 100px rgba(0,0,0,0.9); 
-        }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
-        .modal-header h3 { font-family: 'Orbitron', sans-serif; color: #fff; font-size: 18px; letter-spacing: 2px; }
-        .close-modal { background: transparent; border: none; color: var(--text-muted); font-size: 28px; cursor: pointer; transition: color 0.2s; }
-        .close-modal:hover { color: #fff; }
+/* CHAOS panel glow */
+body.theme-chaos .panel { animation: chaosPanelGlow 5s ease infinite; }
+@keyframes chaosPanelGlow {
+    0%,100%{ border-color: rgba(255,0,255,0.28); box-shadow: 0 0 30px rgba(255,0,255,0.1); }
+    25%    { border-color: rgba(0,255,255,0.4);   box-shadow: 0 0 30px rgba(0,255,255,0.12); }
+    50%    { border-color: rgba(255,128,0,0.3);   box-shadow: 0 0 30px rgba(255,128,0,0.1); }
+    75%    { border-color: rgba(128,0,255,0.35);  box-shadow: 0 0 30px rgba(128,0,255,0.1); }
+}
 
-        .modal-scroll-area { overflow-y: auto; flex: 1; margin-bottom: 20px; padding-right: 15px; }
-        
-        .modal-level-row {
-            display: grid; grid-template-columns: 50px 1fr 1fr 1fr 1fr auto auto; gap: 15px; align-items: center;
-            background: rgba(40,28,8,0.6); padding: 16px 20px; border-radius: 16px; margin-bottom: 12px;
-            border: 1px solid rgba(180,140,50,0.18); transition: background 0.2s;
-        }
-        .modal-level-row:hover { background: rgba(60,44,12,0.75); }
-        .modal-level-row.break-row {
-            grid-template-columns: 50px 3fr 1fr auto auto; background: rgba(0,60,24,0.35); border: 1px solid rgba(0,200,100,0.25);
-        }
-        .modal-row-label { font-size: 15px; font-weight: 900; color: var(--text-muted); }
-        
-        .form-group { display: flex; flex-direction: column; gap: 8px; }
-        .form-group label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 1px;}
-        .form-group input { 
-            background: rgba(20,14,4,0.85); border: 1px solid rgba(160,120,40,0.3); padding: 12px; border-radius: 8px; color: #fff; font-family: 'Orbitron', sans-serif; font-size: 16px; transition: border 0.2s;
-        }
-        .form-group input:focus { border-color: var(--gold-text); outline: none; background: rgba(0,0,0,0.6);}
-        
-        .btn-action-group { display: flex; flex-direction: column; gap: 6px; }
-        .btn-move { background: rgba(40,28,8,0.6); border: 1px solid rgba(160,120,40,0.2); color: var(--text-muted); padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
-        .btn-move:hover:not(:disabled) { background: rgba(255,255,255,0.1); color: #fff; }
-        .btn-move:disabled { opacity: 0.2; cursor: not-allowed; }
+.panel-title {
+    font-size: 12px; text-transform: uppercase; letter-spacing: 3px; color: var(--text-muted);
+    margin-bottom: 18px; font-weight: 800; display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.panel-title::before { content: ''; display: block; width: 5px; height: 16px; background: var(--c-accent); border-radius: 3px; box-shadow: 0 0 10px var(--c-accent-glow); transition: background 0.5s, box-shadow 0.5s; }
 
-        .btn-delete-level { background: transparent; border: none; color: var(--danger-red); font-size: 20px; cursor: pointer; padding: 10px; border-radius: 8px; transition: all 0.2s; height: 100%; opacity: 0.7;}
-        .btn-delete-level:hover { opacity: 1; transform: scale(1.1); }
+/* ════════════════════════════════════════
+   LEVEL LIST (热力图)
+════════════════════════════════════════ */
+.level-list { overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 7px; padding-right: 4px; }
+.level-item {
+    display: grid; grid-template-columns: 46px 1fr 56px; align-items: center;
+    padding: 12px 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+}
+.level-item:hover { background: rgba(255,255,255,0.07); }
+.level-item.active {
+    background: linear-gradient(90deg, rgba(var(--accent-rgb, 229,193,88),0.14) 0%, rgba(var(--accent-rgb, 229,193,88),0.02) 100%);
+    border: 1px solid var(--c-accent);
+    border-left: 4px solid var(--c-accent);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+}
+.level-item.break.active { border-color: var(--break-green); border-left-color: var(--break-green); }
+/* Heat map */
+.level-item.past-level  { opacity: 0.28; filter: grayscale(0.6); }
+.level-item.next-level  { opacity: 1; border-color: rgba(255,255,255,0.12); }
+.level-item.far-level   { opacity: 0.52; }
+.lvl-num   { font-size: 12px; font-weight: 800; color: var(--text-muted); }
+.level-item.active .lvl-num { color: var(--c-accent); }
+.level-item.break.active .lvl-num { color: var(--break-green); }
+.lvl-blinds{ font-size: 15px; color: #fff; font-family: 'Orbitron', sans-serif; font-weight: 700; letter-spacing: 0.5px; }
+.lvl-time  { font-size: 11px; color: var(--text-muted); text-align: right; font-weight: 600; }
 
-        .modal-actions { display: flex; gap: 15px; }
+/* ════════════════════════════════════════
+   CENTER — 主时钟卡
+════════════════════════════════════════ */
+.center-content { display: flex; flex-direction: column; min-height: 0; }
+.main-display-card {
+    flex: 1; min-height: 0;
+    background: radial-gradient(ellipse 70% 55% at 50% 35%, var(--c-blind-from) 0%, var(--c-main-card) 100%);
+    border-top: 1px solid var(--c-border-top);
+    box-shadow: 0 30px 70px rgba(0,0,0,0.65), inset 0 0 50px var(--c-main-card-glow);
+}
 
+.blinds-banner { display: flex; gap: 16px; flex-shrink: 0; }
+.blind-block {
+    flex: 1; text-align: center;
+    background: linear-gradient(180deg, var(--c-blind-from) 0%, var(--c-blind-to) 100%);
+    border: 1px solid var(--c-border); border-top: 1px solid var(--c-border-top);
+    border-radius: 14px; padding: 18px 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+    transition: background 0.5s, border-color 0.5s;
+}
+.blind-block.highlight-block { border-color: var(--c-accent); box-shadow: 0 0 20px var(--c-accent-glow); }
+.blind-block label { font-size: 10px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; display: block; margin-bottom: 8px; font-weight: 800; }
+.blind-block .value { font-size: clamp(26px, 3.2vw, 40px); font-weight: 900; color: #fff; font-family: 'Orbitron', sans-serif; }
+.blind-block .value.current { color: var(--c-accent); text-shadow: 0 0 18px var(--c-accent-glow); transition: color 0.5s, text-shadow 0.5s; }
 
-        /* ── PROGRESS BAR ── */
-        .progress-wrap { width: 100%; height: 4px; background: rgba(255,255,255,0.07); border-radius: 2px; margin: 10px 0 18px; overflow: hidden; }
-        .progress-fill { height: 100%; border-radius: 2px; transition: width 0.8s linear, background 0.5s; background: linear-gradient(90deg, #8B6A10, #E5C158, #FFF0A0); }
+.timer-zone { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; min-height: 0; gap: 2px; }
 
-        /* ── TIMER WARN STATES (subtle) ── */
-        #timer.warn-60  { color: #EDD97A; text-shadow: 0 0 40px rgba(237,217,122,0.18), 0 10px 20px rgba(0,0,0,0.8); }
-        #timer.warn-30  { color: #E8A87C; text-shadow: 0 0 40px rgba(232,168,124,0.22), 0 10px 20px rgba(0,0,0,0.8); animation: gentlePulse 1.2s ease-in-out infinite alternate; }
-        @keyframes gentlePulse { from { opacity: 1; } to { opacity: 0.82; } }
+/* ── 盲注级别标签（倒计时上方）── */
+#levelCenter {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(20px, 2.6vw, 42px);
+    font-weight: 900;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    color: var(--c-accent);
+    /* 故意不加 text-shadow / animation，清晰第一 */
+    transition: color 0.4s;
+    line-height: 1;
+    user-select: none;
+}
+#levelCenter.break-mode { color: var(--break-green); }
+body.theme-ept #levelCenter { color: var(--c-accent); }
+/* Chaos 主题：级别标签保持纯色，不参与动画 */
+body.theme-chaos #levelCenter { animation: none !important; text-shadow: none !important; color: #FF2D9B; }
+#timer {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(110px, 14vw, 220px);
+    font-weight: 900; color: #fff; letter-spacing: 6px; cursor: pointer;
+    transition: color 0.3s, text-shadow 0.3s;
+    text-shadow: 0 0 50px rgba(255,255,255,0.12), 0 8px 20px rgba(0,0,0,0.8);
+}
+#timer.break-active { color: var(--break-green); text-shadow: 0 0 50px rgba(0,230,118,0.28); }
+#timer.warn-60 { color: #EDD97A; text-shadow: 0 0 40px rgba(237,217,122,0.2); }
+#timer.warn-30 { color: #E8A87C; text-shadow: 0 0 40px rgba(232,168,124,0.25); animation: gentlePulse 1.2s ease-in-out infinite alternate; }
+@keyframes gentlePulse { from{opacity:1} to{opacity:0.80} }
 
-        /* ── FULLSCREEN BUTTON ── */
-        .fs-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
-        .fs-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+/* CHAOS timer */
+body.theme-chaos #timer {
+    animation: chaosTimerGlow 2s ease infinite;
+    text-shadow: 0 0 30px #FF00FF, 0 0 60px rgba(255,0,255,0.3);
+}
+body.theme-chaos #timer.warn-30 { animation: chaosGlitch 2.5s ease infinite; }
+@keyframes chaosTimerGlow { 0%,100%{text-shadow:0 0 30px #FF00FF, 0 0 60px rgba(255,0,255,0.3);} 50%{text-shadow:0 0 30px #00FFFF, 0 0 60px rgba(0,255,255,0.3);} }
+@keyframes chaosGlitch {
+    0%,90%,100%{ transform:none; text-shadow:0 0 30px #FF00FF; }
+    91%{ transform:skewX(-3deg) translateX(-4px); text-shadow:-4px 0 #FF0000, 4px 0 #00FFFF; }
+    92%{ transform:skewX(3deg)  translateX(4px);  text-shadow: 4px 0 #FF0000,-4px 0 #00FFFF; }
+    93%{ transform:none; text-shadow:0 0 30px #FF00FF; }
+    96%{ transform:translateX(-2px) skewX(-1deg); text-shadow:-2px 0 #FF00FF, 2px 0 #00FFFF; }
+    97%{ transform:none; }
+}
 
-        /* ── END TOAST (replaces alert) ── */
-        .end-toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.85); opacity: 0; pointer-events: none; z-index: 999;
-            background: rgba(15,18,25,0.95); border: 1px solid var(--gold-highlight); border-radius: 20px;
-            padding: 40px 60px; text-align: center; transition: all 0.35s cubic-bezier(.34,1.56,.64,1);
-            box-shadow: 0 40px 80px rgba(0,0,0,0.8); }
-        .end-toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: all; }
-        .end-toast h2 { font-family: 'Orbitron', sans-serif; font-size: 28px; color: var(--gold-text); letter-spacing: 4px; margin-bottom: 10px; }
-        .end-toast p  { color: var(--text-muted); font-size: 14px; letter-spacing: 1px; margin-bottom: 24px; }
-        .end-toast button { background: var(--gold-text); color: #000; border: none; padding: 12px 32px; border-radius: 10px; font-weight: 800; font-size: 14px; cursor: pointer; letter-spacing: 1px; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--gold-text); }
+/* ── PROGRESS BAR ── */
+.progress-wrap { width: 100%; height: 4px; background: rgba(255,255,255,0.07); border-radius: 2px; margin: 8px 0 16px; overflow: hidden; flex-shrink: 0; }
+.progress-fill { height: 100%; border-radius: 2px; transition: width 0.8s linear; background: linear-gradient(90deg, #8B6A10, var(--c-accent), #FFF0A0); }
+body.theme-chaos .progress-fill { background: linear-gradient(90deg, #FF00FF, #00FFFF, #FF8800, #FF00FF); animation: chaosProgressShift 3s linear infinite; background-size: 200% 100%; }
+@keyframes chaosProgressShift { 0%{background-position:0% 0%} 100%{background-position:200% 0%} }
+
+.ctrl-bar { display: flex; justify-content: center; gap: 12px; flex-shrink: 0; }
+.ctrl-btn {
+    background: rgba(255,255,255,0.06); border: 1px solid var(--c-border); color: #fff;
+    padding: 12px 24px; border-radius: 10px; font-weight: 800; letter-spacing: 1px; cursor: pointer; transition: all 0.15s; font-size: 12px;
+}
+.ctrl-btn:hover { background: rgba(255,255,255,0.12); border-color: var(--c-accent); transform: translateY(-2px); }
+.ctrl-btn:active { transform: scale(0.96); }
+.ctrl-btn.primary {
+    background: linear-gradient(135deg, var(--c-accent) 0%, color-mix(in srgb, var(--c-accent) 60%, black) 100%);
+    color: #000; border: none; box-shadow: 0 8px 18px var(--c-accent-glow);
+}
+body.theme-chaos .ctrl-btn.primary { color: #000; animation: chaosBtnPulse 2s ease infinite; }
+@keyframes chaosBtnPulse { 0%,100%{background:linear-gradient(135deg,#FF00FF,#8800AA);box-shadow:0 0 20px rgba(255,0,255,0.5);} 50%{background:linear-gradient(135deg,#00FFFF,#0088AA);box-shadow:0 0 20px rgba(0,255,255,0.5);} }
+
+/* ════════════════════════════════════════
+   RIGHT — STATS
+════════════════════════════════════════ */
+.stats-grid { display: flex; flex-direction: column; gap: 14px; flex: 1; min-height: 0; overflow-y: auto; }
+.stat-card {
+    background: linear-gradient(145deg, var(--c-stat-from) 0%, var(--c-stat-to) 100%);
+    border: 1px solid var(--c-border);
+    border-top: 1px solid var(--c-border-top);
+    border-left: 3px solid var(--c-stat-left);
+    border-radius: 14px; padding: 18px; position: relative; overflow: hidden; flex-shrink: 0;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 6px 20px rgba(0,0,0,0.4);
+    transition: background 0.5s, border-color 0.5s;
+}
+.stat-label { font-size: 10px; color: var(--text-muted); letter-spacing: 1.5px; font-weight: 800; text-transform: uppercase; display: block; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 7px; }
+.stat-value { font-family: 'Orbitron', sans-serif; font-size: 30px; font-weight: 900; color: #fff; }
+.stat-value.gold { color: var(--c-accent); transition: color 0.5s; }
+.stat-value.blue { color: var(--ice-blue); }
+
+.chips-input {
+    background: rgba(0,0,0,0.45); border: 1px solid var(--c-border); border-radius: 10px;
+    padding: 10px 14px; color: var(--c-accent); font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 900; width: 100%;
+    box-shadow: inset 0 3px 8px rgba(0,0,0,0.6); transition: border 0.3s, color 0.5s;
+}
+.chips-input:focus { outline: none; border-color: var(--c-accent); box-shadow: inset 0 3px 8px rgba(0,0,0,0.6), 0 0 14px var(--c-accent-glow); }
+
+.stepper-row { display: flex; justify-content: space-between; align-items: center; }
+.stepper-ctrls { display: flex; gap: 7px; }
+.step-btn {
+    background: rgba(255,255,255,0.06); border: 1px solid var(--c-border); color: #fff;
+    width: 42px; height: 42px; border-radius: 10px; font-size: 20px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+}
+.step-btn:hover { background: rgba(255,255,255,0.14); }
+.step-btn:active { transform: scale(0.92); }
+
+.btn-eliminate-giant {
+    background: linear-gradient(135deg, rgba(255,59,48,0.8), rgba(200,20,10,0.9)); border: 1px solid rgba(255,100,100,0.3); color: #fff;
+    font-size: 12px; font-weight: 800; letter-spacing: 2px; height: 46px; border-radius: 10px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    box-shadow: 0 6px 18px rgba(255,59,48,0.28); margin-top: 14px; transition: transform 0.1s; width: 100%; text-transform: uppercase;
+}
+.btn-eliminate-giant:active { transform: scale(0.97); }
+
+/* ════════════════════════════════════════
+   MODALS
+════════════════════════════════════════ */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.88); backdrop-filter: blur(12px);
+    z-index: 100; display: none; justify-content: center; align-items: center; padding: 30px;
+}
+.modal-content {
+    background: linear-gradient(160deg, var(--c-panel-from) 0%, var(--c-panel-to) 100%);
+    border: 1px solid var(--c-border); border-top: 1px solid var(--c-border-top);
+    border-radius: 22px; width: 100%; max-width: 860px; max-height: 88%; display: flex; flex-direction: column;
+    padding: 30px; box-shadow: 0 50px 100px rgba(0,0,0,0.9);
+    transition: background 0.5s, border-color 0.5s;
+}
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 14px; }
+.modal-header h3 { font-family: 'Orbitron', sans-serif; color: #fff; font-size: 16px; letter-spacing: 2px; }
+.close-modal { background: transparent; border: none; color: var(--text-muted); font-size: 26px; cursor: pointer; transition: color 0.2s; }
+.close-modal:hover { color: #fff; }
+.modal-scroll-area { overflow-y: auto; flex: 1; margin-bottom: 18px; padding-right: 12px; }
+.modal-level-row {
+    display: grid; grid-template-columns: 46px 1fr 1fr 1fr 1fr auto auto; gap: 12px; align-items: center;
+    background: rgba(255,255,255,0.04); padding: 14px 18px; border-radius: 14px; margin-bottom: 10px;
+    border: 1px solid rgba(255,255,255,0.06); transition: background 0.2s;
+}
+.modal-level-row:hover { background: rgba(255,255,255,0.07); }
+.modal-level-row.break-row { grid-template-columns: 46px 3fr 1fr auto auto; background: rgba(0,60,24,0.3); border: 1px solid rgba(0,200,100,0.2); }
+.modal-row-label { font-size: 14px; font-weight: 900; color: var(--text-muted); }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group label { font-size: 9px; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+.form-group input {
+    background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.12); padding: 10px; border-radius: 7px;
+    color: #fff; font-family: 'Orbitron', sans-serif; font-size: 15px; transition: border 0.2s;
+}
+.form-group input:focus { border-color: var(--c-accent); outline: none; }
+.btn-action-group { display: flex; flex-direction: column; gap: 5px; }
+.btn-move { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); padding: 5px 9px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; }
+.btn-move:hover:not(:disabled) { background: rgba(255,255,255,0.12); color: #fff; }
+.btn-move:disabled { opacity: 0.2; cursor: not-allowed; }
+.btn-delete-level { background: transparent; border: none; color: var(--danger-red); font-size: 18px; cursor: pointer; padding: 8px; border-radius: 7px; transition: all 0.2s; opacity: 0.7; }
+.btn-delete-level:hover { opacity: 1; transform: scale(1.1); }
+.modal-actions { display: flex; gap: 12px; }
+
+/* ════════════════════════════════════════
+   BLINDS UP 升盲动画
+════════════════════════════════════════ */
+#blindsUpOverlay {
+    position: fixed; inset: 0; z-index: 400;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    pointer-events: none; opacity: 0;
+    background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(0,0,0,0.6) 0%, transparent 80%);
+}
+#blindsUpOverlay.show { animation: buFade 2.4s forwards; }
+@keyframes buFade { 0%{opacity:0} 8%{opacity:1} 75%{opacity:1} 100%{opacity:0} }
+
+.bu-main {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(52px, 10vw, 130px);
+    font-weight: 900; color: var(--c-accent); letter-spacing: 6px;
+    text-shadow: 0 0 60px var(--c-accent-glow), 0 0 120px var(--c-accent-glow);
+    animation: buScale 2.4s forwards;
+}
+@keyframes buScale {
+    0%  { transform: scale(0.4); opacity:0; }
+    12% { transform: scale(1.05); opacity:1; }
+    20% { transform: scale(1); }
+    80% { transform: scale(1); opacity:1; }
+    100%{ transform: scale(1.6); opacity:0; }
+}
+.bu-level {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(16px, 2.5vw, 32px);
+    font-weight: 900; color: rgba(255,255,255,0.7); letter-spacing: 8px; margin-top: 16px;
+    animation: buSlideUp 2.4s forwards;
+}
+.bu-blinds {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(20px, 3vw, 44px);
+    font-weight: 900; color: #fff; letter-spacing: 4px; margin-top: 8px;
+    animation: buSlideUp 2.4s 0.1s forwards;
+}
+@keyframes buSlideUp {
+    0%  { opacity:0; transform:translateY(20px); }
+    20% { opacity:1; transform:translateY(0); }
+    80% { opacity:1; }
+    100%{ opacity:0; }
+}
+/* Flash border on BLINDS UP */
+#blindsUpFlash {
+    position: fixed; inset: 0; pointer-events: none; z-index: 399;
+    border: 0px solid var(--c-accent); opacity: 0;
+}
+#blindsUpFlash.flash { animation: buFlash 0.5s ease; }
+@keyframes buFlash {
+    0%  { opacity:0; border-width:0px; }
+    30% { opacity:1; border-width:24px; box-shadow: inset 0 0 60px var(--c-accent-glow); }
+    100%{ opacity:0; border-width:0px; }
+}
+
+/* ════════════════════════════════════════
+   SCROLLBAR
+════════════════════════════════════════ */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--c-accent); }
+
+/* ════════════════════════════════════════
+   TOAST / iOS TIP
+════════════════════════════════════════ */
+.end-toast {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0.85); opacity: 0; pointer-events: none; z-index: 999;
+    background: rgba(10,8,4,0.96); border: 1px solid var(--c-accent); border-radius: 18px;
+    padding: 36px 54px; text-align: center; transition: all 0.35s cubic-bezier(.34,1.56,.64,1);
+    box-shadow: 0 40px 80px rgba(0,0,0,0.85);
+}
+.end-toast.show { opacity: 1; transform: translate(-50%,-50%) scale(1); pointer-events: all; }
+.end-toast h2 { font-family: 'Orbitron', sans-serif; font-size: 26px; color: var(--c-accent); letter-spacing: 4px; margin-bottom: 10px; }
+.end-toast p  { color: var(--text-muted); font-size: 13px; margin-bottom: 22px; }
+.end-toast button { background: var(--c-accent); color: #000; border: none; padding: 11px 30px; border-radius: 10px; font-weight: 800; font-size: 13px; cursor: pointer; }
+
+.ios-tip {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.92); border: 1px solid var(--c-accent); border-radius: 14px;
+    padding: 12px 20px; font-size: 12px; color: #fff; text-align: center;
+    z-index: 9999; max-width: 300px; display: none;
+}
+.ios-tip strong { color: var(--c-accent); display: block; margin-bottom: 4px; }
+
+/* ════════════════════════════════════════
+   投屏弹窗
+════════════════════════════════════════ */
+.cast-qr-wrap { display: flex; justify-content: center; margin: 16px 0; }
+.cast-qr-wrap > div { padding: 14px; background: white; border-radius: 12px; }
+.cast-room-id { text-align:center; font-family:'Orbitron',sans-serif; font-size:24px; font-weight:900; color:var(--c-accent); letter-spacing:6px; margin:12px 0 6px; transition:color 0.5s; }
+.cast-hint { text-align:center; color:var(--text-muted); font-size:12px; line-height:1.7; margin-bottom:14px; }
+.cast-status-bar { display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 18px; border-radius:10px; margin-top:10px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.07); font-size:12px; font-weight:700; letter-spacing:1px; color:var(--text-muted); }
+.cast-status-bar.connected { color:var(--break-green); border-color:rgba(0,230,118,0.3); background:rgba(0,100,50,0.18); }
+.cast-status-dot { width:7px; height:7px; border-radius:50%; background:var(--text-muted); }
+.cast-status-bar.waiting .cast-status-dot { animation:castPulse 1.5s ease infinite; }
+.cast-status-bar.connected .cast-status-dot { background:var(--break-green); animation:none; }
+@keyframes castPulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+.cast-warning { color:#ffbb33; font-size:11px; text-align:center; margin-top:7px; padding:7px 11px; background:rgba(255,180,0,0.07); border-radius:8px; border:1px solid rgba(255,180,0,0.2); }
+
+/* ════════════════════════════════════════
+   TV 大屏显示模式
+════════════════════════════════════════ */
+#displayView {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100dvh;
+    background-color: var(--c-bg);
+    display: none; flex-direction: column; justify-content: space-between; align-items: center;
+    padding: 4vh 5vw; z-index: 200; transition: background-color 0.5s;
+}
+.tv-header { width:100%; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+.tv-level-badge { font-family:'Orbitron',sans-serif; font-size:clamp(16px,2.5vw,28px); font-weight:900; color:var(--c-accent); letter-spacing:4px; text-shadow:0 0 20px var(--c-accent-glow); transition:color 0.5s; }
+.tv-level-badge.break-badge { color:var(--break-green); text-shadow:0 0 20px rgba(0,230,118,0.4); }
+.tv-conn-badge { display:flex; align-items:center; gap:8px; font-size:12px; font-weight:700; letter-spacing:2px; color:var(--text-muted); opacity:0.6; }
+.tv-conn-dot { width:8px; height:8px; border-radius:50%; background:var(--text-muted); }
+.tv-conn-badge.connected { color:var(--break-green); opacity:1; }
+.tv-conn-badge.connected .tv-conn-dot { background:var(--break-green); box-shadow:0 0 8px var(--break-green); }
+.tv-center { flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:2vh; }
+#tvTimer {
+    font-family:'Orbitron',sans-serif; font-size:clamp(120px,20vw,300px); font-weight:900; color:#fff;
+    letter-spacing:8px; text-shadow:0 0 80px rgba(255,255,255,0.1), 0 10px 40px rgba(0,0,0,0.9); line-height:1;
+    transition: color 0.3s;
+}
+#tvTimer.break-active { color:var(--break-green); text-shadow:0 0 80px rgba(0,230,118,0.22); }
+#tvTimer.warn-60 { color:#EDD97A; }
+#tvTimer.warn-30 { color:#E8A87C; animation:gentlePulse 1.2s ease-in-out infinite alternate; }
+body.theme-chaos #tvTimer { animation:chaosTimerGlow 2s ease infinite; }
+
+.tv-blinds-row { display:flex; gap:3vw; align-items:flex-end; }
+.tv-blind-block { text-align:center; }
+.tv-blind-block label { display:block; font-size:clamp(9px,1.1vw,13px); color:var(--text-muted); letter-spacing:2px; text-transform:uppercase; font-weight:800; margin-bottom:5px; }
+.tv-blind-block .tv-bval { font-family:'Orbitron',sans-serif; font-size:clamp(26px,4.5vw,64px); font-weight:900; color:#fff; }
+.tv-blind-block.highlight .tv-bval { color:var(--c-accent); text-shadow:0 0 22px var(--c-accent-glow); transition:color 0.5s; }
+.tv-blind-block .tv-bval.muted { color:var(--text-muted); font-size:clamp(16px,2.6vw,38px); }
+.tv-blind-divider { font-family:'Orbitron',sans-serif; font-size:clamp(20px,3vw,44px); color:rgba(255,255,255,0.15); margin-bottom:7px; }
+
+.tv-footer { width:100%; flex-shrink:0; }
+.tv-progress-wrap { width:100%; height:6px; background:rgba(255,255,255,0.07); border-radius:3px; margin-bottom:14px; overflow:hidden; }
+.tv-progress-fill { height:100%; border-radius:3px; transition:width 0.8s linear; background:linear-gradient(90deg,#8B6A10,var(--c-accent),#FFF0A0); }
+body.theme-chaos .tv-progress-fill { background:linear-gradient(90deg,#FF00FF,#00FFFF,#FF8800,#FF00FF); animation:chaosProgressShift 3s linear infinite; background-size:200% 100%; }
+
+.tv-stats-row { display:flex; justify-content:space-around; align-items:center; padding:12px 24px; background:rgba(0,0,0,0.35); border:1px solid var(--c-border); border-radius:14px; transition:border-color 0.5s; }
+.tv-stat-item { text-align:center; }
+.tv-stat-item label { display:block; font-size:clamp(8px,0.9vw,11px); color:var(--text-muted); letter-spacing:2px; text-transform:uppercase; font-weight:800; margin-bottom:3px; }
+.tv-stat-item span { font-family:'Orbitron',sans-serif; font-size:clamp(14px,2vw,26px); font-weight:900; color:#fff; }
+.tv-stat-item span.gold { color:var(--c-accent); transition:color 0.5s; }
+.tv-stat-item span.blue { color:var(--ice-blue); }
+
+.tv-waiting { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; }
+.tv-waiting-pulse { font-family:'Orbitron',sans-serif; font-size:clamp(60px,10vw,140px); font-weight:900; color:rgba(255,255,255,0.07); animation:tvWaitPulse 2s ease-in-out infinite; }
+@keyframes tvWaitPulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+.tv-waiting-text { font-size:13px; color:var(--text-muted); letter-spacing:3px; text-transform:uppercase; margin-top:20px; }
+
+/* ════════════════════════════════════════
+   CHAOS CANVAS (particles)
+════════════════════════════════════════ */
+#chaosCanvas {
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    pointer-events: none; z-index: 0; opacity: 0; transition: opacity 0.8s;
+}
     </style>
 </head>
-<body>
+<body class="theme-wsop">
 
+<!-- ── Chaos particles canvas ── -->
+<canvas id="chaosCanvas"></canvas>
+
+<!-- ── BLINDS UP 动画层 ── -->
+<div id="blindsUpFlash"></div>
+<div id="blindsUpOverlay">
+    <div class="bu-main" id="buMainText">BLINDS UP</div>
+    <div class="bu-level" id="buLevelText">LEVEL 1</div>
+    <div class="bu-blinds" id="buBlindsText">100 / 200</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     控制器视图
+══════════════════════════════════════ -->
+<div id="controllerView" style="display:flex;flex-direction:column;height:100dvh;overflow:hidden;">
     <header>
         <div class="logo-zone"><span class="logo-text">POKER<span>LEAGUE</span> PRO</span></div>
-        <div class="nav-tabs">
-            <button class="tab-btn active" onclick="switchView('main')">TV 大屏监控</button>
-            <button class="tab-btn" onclick="switchView('blinds')">盲注结构台</button>
-            <button class="fs-btn" onclick="toggleFullscreen()" title="全屏">⛶</button>
+        <div class="header-right">
+            <!-- 主题切换 -->
+            <div class="theme-switcher" id="themeSwitcher">
+                <button class="th-btn active" data-theme="wsop"   onclick="setTheme('wsop')">WSOP</button>
+                <button class="th-btn"        data-theme="triton" onclick="setTheme('triton')">TRITON</button>
+                <button class="th-btn"        data-theme="ept"    onclick="setTheme('ept')">EPT</button>
+                <button class="th-btn"        data-theme="wpt"    onclick="setTheme('wpt')">WPT</button>
+                <button class="th-btn"        data-theme="chaos"  onclick="setTheme('chaos')">⚡ CHAOS</button>
+            </div>
+            <div class="nav-tabs">
+                <button class="tab-btn active" onclick="switchView('main')">TV 监控</button>
+                <button class="tab-btn" onclick="switchView('blinds')">盲注结构</button>
+            </div>
+            <button class="cast-btn" id="castBtn" onclick="openCastModal()">📡 投屏</button>
+            <button class="fs-btn" onclick="handleFullscreen()">⛶</button>
         </div>
     </header>
 
     <main>
+        <!-- 左：结构列表 -->
         <section class="panel">
             <h2 class="panel-title">Tournament Structure</h2>
             <div class="level-list" id="levelList"></div>
         </section>
 
+        <!-- 中：时钟主舞台 -->
         <section class="center-content">
             <div class="panel main-display-card">
                 <div class="blinds-banner">
                     <div class="blind-block highlight-block">
-                        <label id="levelLabel">Current Level</label>
+                        <label>Small / Big 小大盲</label>
                         <div class="value current" id="currentBlindsDisplay">100 / 200</div>
                     </div>
                     <div class="blind-block">
@@ -296,16 +800,14 @@
                         <div class="value" id="currentAnteDisplay">200</div>
                     </div>
                     <div class="blind-block">
-                        <label>Next Level</label>
-                        <div class="value" style="color: var(--text-muted); font-size: 28px; margin-top: 6px;" id="nextBlindsDisplay">200 / 400</div>
+                        <label>Next Level 下一级</label>
+                        <div class="value" style="color:var(--text-muted);font-size:26px;margin-top:6px;" id="nextBlindsDisplay">200 / 400</div>
                     </div>
                 </div>
-
                 <div class="timer-zone">
+                    <div id="levelCenter">LEVEL 1</div>
                     <div id="timer" onclick="toggleTimer()">20:00</div>
                 </div>
-
-
                 <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:100%"></div></div>
                 <div class="ctrl-bar">
                     <button class="ctrl-btn" onclick="prevLevel()">◀ PREV</button>
@@ -316,12 +818,12 @@
             </div>
         </section>
 
+        <!-- 右：统计 -->
         <section class="stats-grid">
             <div class="stat-card">
                 <span class="stat-label">Starting Stack 初始记分牌</span>
                 <input type="number" class="chips-input" id="startingChipsInput" value="20000" oninput="updateStats()">
             </div>
-
             <div class="stat-card">
                 <span class="stat-label">Total Entries 总买入人次</span>
                 <div class="stepper-row">
@@ -332,9 +834,8 @@
                     </div>
                 </div>
             </div>
-
-            <div class="stat-card" style="flex: 1;">
-                <span class="stat-label">Players Remaining 存活 / 总计</span>
+            <div class="stat-card" style="flex:1;">
+                <span class="stat-label">Players Remaining 存活</span>
                 <div class="stepper-row">
                     <span class="stat-value blue" id="playersDisplay">10 / 10</span>
                     <div class="stepper-ctrls">
@@ -344,424 +845,715 @@
                 </div>
                 <button class="btn-eliminate-giant" onclick="eliminatePlayer()">Player Out 淘汰选手</button>
             </div>
-
             <div class="stat-card">
-                <span class="stat-label">Chips Data 场内筹码概览</span>
-                <div style="display:flex; justify-content: space-between; align-items: baseline;">
+                <span class="stat-label">Chips Data 筹码概览</span>
+                <div style="display:flex;justify-content:space-between;align-items:baseline;">
                     <div>
-                        <span style="font-size:11px; color:var(--text-muted); display:block; margin-bottom: 4px;">Total 总量</span>
-                        <span class="stat-value" id="totalChipsDisplay" style="font-size: 24px;">200,000</span>
+                        <span style="font-size:10px;color:var(--text-muted);display:block;margin-bottom:3px;">Total 总量</span>
+                        <span class="stat-value" id="totalChipsDisplay" style="font-size:22px;">200,000</span>
                     </div>
                     <div style="text-align:right;">
-                        <span style="font-size:11px; color:var(--text-muted); display:block; margin-bottom: 4px;">Average 均码</span>
-                        <span class="stat-value" id="avgChipsDisplay" style="font-size: 24px;">20,000</span>
+                        <span style="font-size:10px;color:var(--text-muted);display:block;margin-bottom:3px;">Average 均码</span>
+                        <span class="stat-value" id="avgChipsDisplay" style="font-size:22px;">20,000</span>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- 盲注编辑弹窗 -->
         <div class="modal-overlay" id="blindsModal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h3>BLIND STRUCTURE & BREAKS</h3>
                     <button class="close-modal" onclick="closeModals()">✕</button>
                 </div>
-                
                 <div class="modal-scroll-area" id="modalBlindsList"></div>
-                
                 <div class="modal-actions">
-                    <button class="ctrl-btn primary" style="flex:1;" onclick="addNewLevel(false)">+ ADD LEVEL 新增级别</button>
-                    <button class="ctrl-btn" style="flex:1; border-color: var(--break-green); color: var(--break-green);" onclick="addNewLevel(true)">+ ADD BREAK 插入休息</button>
+                    <button class="ctrl-btn primary" style="flex:1;" onclick="addNewLevel(false)">+ ADD LEVEL</button>
+                    <button class="ctrl-btn" style="flex:1;border-color:var(--break-green);color:var(--break-green);" onclick="addNewLevel(true)">+ ADD BREAK</button>
                 </div>
             </div>
         </div>
-    
-    <div class="end-toast" id="endToast">
-        <h2>🏆 TOURNAMENT OVER</h2>
-        <p>比赛圆满结束，恭喜所有参赛者！</p>
-        <button onclick="dismissToast()">CLOSE 关闭</button>
+    </main>
+</div>
+
+<!-- ══════════════════════════════════════
+     TV 大屏显示视图
+══════════════════════════════════════ -->
+<div id="displayView">
+    <div class="tv-waiting" id="tvWaiting">
+        <div class="tv-waiting-pulse">--:--</div>
+        <div class="tv-waiting-text">等待控制器连接</div>
     </div>
-</main>
+    <div class="tv-header" id="tvContent" style="display:none;width:100%;">
+        <div class="tv-level-badge" id="tvLevelBadge">LEVEL 1</div>
+        <div class="tv-conn-badge connected" id="tvConnBadge">
+            <span class="tv-conn-dot"></span>
+            <span id="tvConnText">LIVE</span>
+        </div>
+    </div>
+    <div class="tv-center" id="tvCenterContent" style="display:none;">
+        <div id="tvTimer">--:--</div>
+        <div class="tv-blinds-row">
+            <div class="tv-blind-block highlight"><label>Small 小盲</label><div class="tv-bval" id="tvSmall">100</div></div>
+            <div class="tv-blind-divider">/</div>
+            <div class="tv-blind-block highlight"><label>Big 大盲</label><div class="tv-bval" id="tvBig">200</div></div>
+            <div class="tv-blind-divider" style="margin-left:16px;font-size:clamp(12px,1.8vw,28px);">ANTE</div>
+            <div class="tv-blind-block" style="margin-left:8px;"><label>前注</label><div class="tv-bval" id="tvAnte">200</div></div>
+            <div class="tv-blind-divider" style="margin-left:22px;font-size:clamp(12px,1.8vw,28px);">NEXT</div>
+            <div class="tv-blind-block" style="margin-left:8px;"><label>下一级</label><div class="tv-bval muted" id="tvNext">200/400</div></div>
+        </div>
+    </div>
+    <div class="tv-footer" id="tvFooterContent" style="display:none;">
+        <div class="tv-progress-wrap"><div class="tv-progress-fill" id="tvProgress" style="width:100%"></div></div>
+        <div class="tv-stats-row">
+            <div class="tv-stat-item"><label>Players</label><span class="blue" id="tvPlayers">10</span></div>
+            <div class="tv-stat-item"><label>Entries</label><span id="tvEntries">10</span></div>
+            <div class="tv-stat-item"><label>Total Chips</label><span id="tvTotalChips">200,000</span></div>
+            <div class="tv-stat-item"><label>Avg Stack</label><span class="gold" id="tvAvgChips">20,000</span></div>
+        </div>
+    </div>
+</div>
 
-    <script>
-        // ── STATE ──────────────────────────────────────────────────
-        let blindStructure = [
-            { isBreak: false, small: 100, big: 200, ante: 200, time: 1200 },
-            { isBreak: false, small: 200, big: 400, ante: 400, time: 1200 },
-            { isBreak: false, small: 300, big: 600, ante: 600, time: 1200 },
-            { isBreak: true,  small: 0,   big: 0,   ante: 0,   time: 600  },
-            { isBreak: false, small: 400, big: 800, ante: 800, time: 1200 },
-            { isBreak: false, small: 500, big: 1000, ante: 1000, time: 1200 }
-        ];
+<!-- ══════════════════════════════════════
+     投屏弹窗
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="castModal">
+    <div class="modal-content" style="max-width:460px;">
+        <div class="modal-header">
+            <h3>📡 投屏 · CAST</h3>
+            <button class="close-modal" onclick="closeCastModal()">✕</button>
+        </div>
+        <div id="castQrWrap" class="cast-qr-wrap"><div id="qrcode"></div></div>
+        <div class="cast-room-id" id="castRoomId">------</div>
+        <div class="cast-hint">在大屏设备上扫描二维码进入投屏模式<br><small>需要 HTTP 服务访问（非 file://）</small></div>
+        <div id="castFileWarning" class="cast-warning" style="display:none;">
+            ⚠️ 请通过 HTTP 服务访问：<code style="color:var(--c-accent);">python -m http.server 8080</code>
+        </div>
+        <div class="cast-status-bar waiting" id="castStatusBar">
+            <span class="cast-status-dot"></span>
+            <span id="castStatusText">等待大屏设备连接...</span>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:10px;">
+            <button class="ctrl-btn" style="flex:1;" onclick="openLocalDisplay()">📺 本机预览</button>
+            <button class="ctrl-btn primary" style="flex:1;" onclick="copyRoomLink()">复制链接</button>
+        </div>
+    </div>
+</div>
 
-        let currentLevelIndex = 0;
-        let timeLeft = blindStructure[0].time;
-        let timerId = null;
-        let playersRemaining = 10;
-        let totalEntries = 10;
+<!-- Toast & iOS tip -->
+<div class="end-toast" id="endToast">
+    <h2>🏆 TOURNAMENT OVER</h2>
+    <p>比赛圆满结束，恭喜所有参赛者！</p>
+    <button onclick="dismissToast()">CLOSE</button>
+</div>
+<div class="ios-tip" id="iosTip">
+    <strong>全屏使用提示</strong>
+    点击底部「分享」→「添加到主屏幕」，即可全屏运行
+    <br><button onclick="document.getElementById('iosTip').style.display='none'" style="margin-top:8px;background:var(--c-accent);color:#000;border:none;padding:5px 14px;border-radius:8px;font-weight:800;cursor:pointer;font-size:11px;">知道了</button>
+</div>
 
-        // ── LOCALSTORAGE ────────────────────────────────────────────
-        function saveState() {
-            try {
-                localStorage.setItem('plp_structure', JSON.stringify(blindStructure));
-                localStorage.setItem('plp_entries', totalEntries);
-                localStorage.setItem('plp_players', playersRemaining);
-                localStorage.setItem('plp_chips', document.getElementById('startingChipsInput').value);
-            } catch(e) {}
+<script>
+/* ════════════════════════════════════════════════════════════
+   主题系统
+════════════════════════════════════════════════════════════ */
+const THEMES = {
+    wsop:   { bg:'#0C0504' },
+    triton: { bg:'#020406' },
+    ept:    { bg:'#04060F' },
+    wpt:    { bg:'#030610' },
+    chaos:  { bg:'#050005' },
+};
+
+let currentTheme = localStorage.getItem('plp_theme') || 'wsop';
+
+function setTheme(name) {
+    currentTheme = name;
+    // body class
+    document.body.className = document.body.className.replace(/theme-\w+/g, '').trim();
+    document.body.classList.add('theme-' + name);
+    // theme button highlight
+    document.querySelectorAll('.th-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.theme === name);
+    });
+    // save
+    localStorage.setItem('plp_theme', name);
+    // chaos canvas
+    if (name === 'chaos') startChaosCanvas();
+    else stopChaosCanvas();
+}
+
+/* ════════════════════════════════════════════════════════════
+   CHAOS Canvas Particles
+════════════════════════════════════════════════════════════ */
+let chaosAnimId = null;
+const chaosCanvas = document.getElementById('chaosCanvas');
+const chaosCtx = chaosCanvas.getContext('2d');
+let chaosParticles = [];
+
+function initChaosParticles() {
+    chaosCanvas.width  = window.innerWidth;
+    chaosCanvas.height = window.innerHeight;
+    chaosParticles = Array.from({length: 90}, () => ({
+        x: Math.random() * chaosCanvas.width,
+        y: Math.random() * chaosCanvas.height,
+        vx: (Math.random() - 0.5) * 1.4,
+        vy: (Math.random() - 0.5) * 1.4,
+        size: Math.random() * 2.8 + 0.8,
+        hue: Math.random() * 360,
+        life: Math.random(),
+    }));
+}
+
+function drawChaosFrame() {
+    chaosCtx.clearRect(0, 0, chaosCanvas.width, chaosCanvas.height);
+    chaosParticles.forEach(p => {
+        p.x  += p.vx;
+        p.y  += p.vy;
+        p.hue = (p.hue + 0.7) % 360;
+        if (p.x < 0 || p.x > chaosCanvas.width)  p.vx *= -1;
+        if (p.y < 0 || p.y > chaosCanvas.height) p.vy *= -1;
+        // 限制色相范围：粉红→紫→青→橙，避免脏绿色
+        const neonHue = (p.hue % 280 + 280) % 280; // 280~360折回0，跳过黄绿
+        const displayHue = neonHue < 180 ? neonHue * 1.5 : 270 + (neonHue - 180) * 0.5;
+        chaosCtx.shadowBlur = 20;
+        chaosCtx.shadowColor = `hsl(${displayHue},100%,62%)`;
+        chaosCtx.beginPath();
+        chaosCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        chaosCtx.fillStyle = `hsla(${displayHue},100%,68%,0.7)`;
+        chaosCtx.fill();
+    });
+    chaosAnimId = requestAnimationFrame(drawChaosFrame);
+}
+
+function startChaosCanvas() {
+    initChaosParticles();
+    chaosCanvas.style.opacity = '1';
+    if (!chaosAnimId) drawChaosFrame();
+}
+
+function stopChaosCanvas() {
+    chaosCanvas.style.opacity = '0';
+    if (chaosAnimId) { cancelAnimationFrame(chaosAnimId); chaosAnimId = null; }
+}
+
+window.addEventListener('resize', () => {
+    if (currentTheme === 'chaos') initChaosParticles();
+});
+
+/* ════════════════════════════════════════════════════════════
+   常量
+════════════════════════════════════════════════════════════ */
+const urlParams       = new URLSearchParams(location.search);
+const IS_DISPLAY_MODE = urlParams.get('mode') === 'display';
+const PEER_ROOM_PARAM = urlParams.get('room');
+const IS_IOS          = /iP(hone|ad|od)/.test(navigator.userAgent);
+const IS_FILE_PROTO   = location.protocol === 'file:';
+
+/* ════════════════════════════════════════════════════════════
+   状态
+════════════════════════════════════════════════════════════ */
+let blindStructure = [
+    { isBreak:false, small:100,  big:200,  ante:200,  time:1200 },
+    { isBreak:false, small:200,  big:400,  ante:400,  time:1200 },
+    { isBreak:false, small:300,  big:600,  ante:600,  time:1200 },
+    { isBreak:true,  small:0,    big:0,    ante:0,    time:600  },
+    { isBreak:false, small:400,  big:800,  ante:800,  time:1200 },
+    { isBreak:false, small:500,  big:1000, ante:1000, time:1200 },
+];
+let currentLevelIndex = 0;
+let timeLeft          = blindStructure[0].time;
+let timerId           = null;
+let playersRemaining  = 10;
+let totalEntries      = 10;
+
+/* ════════════════════════════════════════════════════════════
+   BLINDS UP 动画
+════════════════════════════════════════════════════════════ */
+function showBlindsUp() {
+    const current = blindStructure[currentLevelIndex];
+    const overlay = document.getElementById('blindsUpOverlay');
+    const flash   = document.getElementById('blindsUpFlash');
+
+    let n = 0;
+    for (let i = 0; i <= currentLevelIndex; i++) if (!blindStructure[i].isBreak) n++;
+
+    document.getElementById('buMainText').textContent   = current.isBreak ? 'BREAK TIME' : 'BLINDS UP';
+    document.getElementById('buLevelText').textContent  = current.isBreak ? 'REST' : `LEVEL  ${n}`;
+    document.getElementById('buBlindsText').textContent = current.isBreak ? '休息中...' : `${current.small.toLocaleString()} / ${current.big.toLocaleString()}`;
+
+    // Flash border
+    flash.classList.remove('flash');
+    void flash.offsetWidth;
+    flash.classList.add('flash');
+
+    // Overlay
+    overlay.classList.remove('show');
+    void overlay.offsetWidth;
+    overlay.classList.add('show');
+
+    setTimeout(() => { overlay.classList.remove('show'); flash.classList.remove('flash'); }, 2500);
+}
+
+/* ════════════════════════════════════════════════════════════
+   投屏同步
+════════════════════════════════════════════════════════════ */
+let peer = null, peerConn = null, myRoomId = null, broadcastCh = null;
+
+function initBroadcastChannel() {
+    try {
+        broadcastCh = new BroadcastChannel('pokerclock_sync');
+        if (IS_DISPLAY_MODE) {
+            broadcastCh.onmessage = (e) => { try { applyRemoteState(JSON.parse(e.data)); } catch(_) {} };
         }
+    } catch(_) {}
+}
 
-        function loadState() {
-            try {
-                const s = localStorage.getItem('plp_structure');
-                if (s) blindStructure = JSON.parse(s);
-                const e = localStorage.getItem('plp_entries');
-                if (e) totalEntries = parseInt(e);
-                const p = localStorage.getItem('plp_players');
-                if (p) playersRemaining = parseInt(p);
-                const c = localStorage.getItem('plp_chips');
-                if (c) document.getElementById('startingChipsInput').value = c;
-            } catch(e) {}
-            timeLeft = blindStructure[currentLevelIndex].time;
-        }
+function broadcastState() {
+    if (IS_DISPLAY_MODE) return;
+    const p = buildStatePacket();
+    if (broadcastCh) broadcastCh.postMessage(JSON.stringify(p));
+    if (peerConn && peerConn.open) { try { peerConn.send(JSON.stringify(p)); } catch(_) {} }
+}
 
-        // ── AUDIO ───────────────────────────────────────────────────
-        let audioCtx = null;
-        function getAudioCtx() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            return audioCtx;
-        }
+function buildStatePacket() {
+    return {
+        type: 'state', currentLevelIndex, timeLeft, isRunning: !!timerId,
+        playersRemaining, totalEntries, blindStructure,
+        startingChips: parseInt(document.getElementById('startingChipsInput')?.value) || 20000,
+        theme: currentTheme,
+    };
+}
 
-        function beep(freq, duration, vol) {
-            try {
-                const ctx = getAudioCtx();
-                const o = ctx.createOscillator();
-                const g = ctx.createGain();
-                o.connect(g); g.connect(ctx.destination);
-                o.frequency.value = freq;
-                g.gain.setValueAtTime(vol, ctx.currentTime);
-                g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-                o.start(ctx.currentTime);
-                o.stop(ctx.currentTime + duration);
-            } catch(e) {}
-        }
+function applyRemoteState(s) {
+    if (!s || s.type !== 'state') return;
+    blindStructure = s.blindStructure;
+    currentLevelIndex = s.currentLevelIndex;
+    timeLeft = s.timeLeft;
+    playersRemaining = s.playersRemaining;
+    totalEntries = s.totalEntries;
+    if (s.theme) setTheme(s.theme);
+    updateTVDisplay();
+}
 
-        function playLevelUpSound() {
-            // 三声升盲提示
-            beep(523, 0.18, 0.3);
-            setTimeout(() => beep(659, 0.18, 0.3), 200);
-            setTimeout(() => beep(784, 0.35, 0.4), 400);
-        }
+function initPeerController() {
+    if (typeof Peer === 'undefined') return;
+    myRoomId = 'PC-' + Math.random().toString(36).substr(2,5).toUpperCase();
+    peer = new Peer(myRoomId, { debug:0 });
+    peer.on('open', (id) => { myRoomId = id; renderCastModal(); });
+    peer.on('connection', (conn) => {
+        peerConn = conn;
+        conn.on('open',  () => { setCastConnected(true); broadcastState(); });
+        conn.on('close', () => setCastConnected(false));
+        conn.on('error', () => setCastConnected(false));
+    });
+    peer.on('error', () => {});
+}
 
-        function playTickSound() {
-            beep(880, 0.08, 0.15);
-        }
+function setCastConnected(ok) {
+    const bar = document.getElementById('castStatusBar');
+    const txt = document.getElementById('castStatusText');
+    const btn = document.getElementById('castBtn');
+    if (!bar) return;
+    if (ok) { bar.className='cast-status-bar connected'; txt.textContent='大屏已连接'; btn?.classList.add('connected'); }
+    else   { bar.className='cast-status-bar waiting';    txt.textContent='等待大屏设备连接...'; btn?.classList.remove('connected'); peerConn=null; }
+}
 
-        // ── FULLSCREEN ──────────────────────────────────────────────
-        function toggleFullscreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(() => {});
+function initPeerDisplay(roomId) {
+    if (typeof Peer === 'undefined') { showTVConnected(); return; }
+    peer = new Peer({ debug:0 });
+    peer.on('open', () => {
+        const conn = peer.connect(roomId);
+        peerConn = conn;
+        conn.on('open',  () => { document.getElementById('tvConnBadge').className='tv-conn-badge connected'; document.getElementById('tvConnText').textContent='LIVE'; showTVConnected(); });
+        conn.on('data',  (d) => { try { applyRemoteState(JSON.parse(d)); } catch(_) {} });
+        conn.on('close', () => { document.getElementById('tvConnBadge').className='tv-conn-badge'; document.getElementById('tvConnText').textContent='DISCONNECTED'; });
+    });
+    peer.on('error', () => showTVConnected());
+}
+
+function showTVConnected() {
+    document.getElementById('tvWaiting').style.display      = 'none';
+    document.getElementById('tvContent').style.display      = 'flex';
+    document.getElementById('tvCenterContent').style.display= 'flex';
+    document.getElementById('tvFooterContent').style.display= 'block';
+    updateTVDisplay();
+}
+
+function openCastModal() {
+    document.getElementById('castModal').style.display = 'flex';
+    if (!peer) initPeerController(); else renderCastModal();
+}
+function closeCastModal() { document.getElementById('castModal').style.display='none'; }
+
+function renderCastModal() {
+    document.getElementById('castRoomId').textContent = myRoomId || '------';
+    const base = IS_FILE_PROTO ? '' : (location.origin + location.pathname);
+    const castUrl = IS_FILE_PROTO ? '' : `${base}?mode=display&room=${myRoomId}`;
+    const qrEl = document.getElementById('qrcode');
+    qrEl.innerHTML = '';
+    if (!IS_FILE_PROTO && castUrl && typeof QRCode !== 'undefined') {
+        new QRCode(qrEl, { text:castUrl, width:170, height:170, colorDark:'#000', colorLight:'#fff', correctLevel:QRCode.CorrectLevel.M });
+    } else {
+        qrEl.innerHTML = '<div style="width:170px;height:170px;display:flex;align-items:center;justify-content:center;color:#666;font-size:11px;text-align:center;">需 HTTP 服务</div>';
+    }
+    document.getElementById('castFileWarning').style.display = IS_FILE_PROTO ? 'block' : 'none';
+}
+
+function copyRoomLink() {
+    if (IS_FILE_PROTO) { alert('请先通过 HTTP 服务器访问此页面'); return; }
+    const url = `${location.origin}${location.pathname}?mode=display&room=${myRoomId}`;
+    navigator.clipboard.writeText(url).then(() => {
+        const btn = event.target; btn.textContent='✓ 已复制'; setTimeout(()=>btn.textContent='复制链接',2000);
+    }).catch(() => prompt('请复制此链接：', url));
+}
+
+function openLocalDisplay() {
+    const url = IS_FILE_PROTO
+        ? location.href.split('?')[0] + '?mode=display'
+        : `${location.origin}${location.pathname}?mode=display&room=${myRoomId||''}`;
+    window.open(url, '_blank');
+}
+
+/* ════════════════════════════════════════════════════════════
+   TV 大屏渲染
+════════════════════════════════════════════════════════════ */
+function updateTVDisplay() {
+    const current = blindStructure[currentLevelIndex];
+    const next    = blindStructure[currentLevelIndex + 1];
+    const lvlBadge = document.getElementById('tvLevelBadge');
+
+    if (current.isBreak) {
+        lvlBadge.textContent = 'BREAK TIME';
+        lvlBadge.className   = 'tv-level-badge break-badge';
+        document.getElementById('tvTimer').className = 'break-active';
+    } else {
+        let n=0; for(let i=0;i<=currentLevelIndex;i++) if(!blindStructure[i].isBreak) n++;
+        lvlBadge.textContent = `LEVEL  ${n}`;
+        lvlBadge.className   = 'tv-level-badge';
+        const tvt = document.getElementById('tvTimer');
+        tvt.classList.remove('break-active','warn-60','warn-30');
+        if (timeLeft<=30) tvt.classList.add('warn-30');
+        else if (timeLeft<=60) tvt.classList.add('warn-60');
+    }
+
+    const mins=Math.floor(timeLeft/60).toString().padStart(2,'0');
+    const secs=(timeLeft%60).toString().padStart(2,'0');
+    document.getElementById('tvTimer').textContent = `${mins}:${secs}`;
+    document.getElementById('tvSmall').textContent = current.isBreak?'--':current.small.toLocaleString();
+    document.getElementById('tvBig').textContent   = current.isBreak?'--':current.big.toLocaleString();
+    document.getElementById('tvAnte').textContent  = current.isBreak?'--':current.ante.toLocaleString();
+    document.getElementById('tvNext').textContent  = !next?'FINAL':next.isBreak?'BREAK':`${next.small}/${next.big}`;
+
+    const total=blindStructure[currentLevelIndex].time;
+    const pct=total>0?(timeLeft/total)*100:0;
+    const fill=document.getElementById('tvProgress');
+    fill.style.width=pct+'%';
+    if (pct<20)       fill.style.background='linear-gradient(90deg,#6B2A10,#C05030,#E8A87C)';
+    else if (pct<40)  fill.style.background='linear-gradient(90deg,#7A5A10,#D4A030,#EDD97A)';
+    else              fill.style.background='';  // uses CSS var
+
+    document.getElementById('tvPlayers').textContent  = playersRemaining;
+    document.getElementById('tvEntries').textContent  = totalEntries;
+    const sc=parseInt(document.getElementById('startingChipsInput')?.value)||20000;
+    const tc=totalEntries*sc, ac=playersRemaining>0?Math.round(tc/playersRemaining):0;
+    document.getElementById('tvTotalChips').textContent = tc.toLocaleString();
+    document.getElementById('tvAvgChips').textContent   = ac.toLocaleString();
+}
+
+/* ════════════════════════════════════════════════════════════
+   全屏
+════════════════════════════════════════════════════════════ */
+function handleFullscreen() {
+    if (IS_IOS) { document.getElementById('iosTip').style.display='block'; setTimeout(()=>document.getElementById('iosTip').style.display='none',6000); return; }
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen({ navigationUI:'hide' }).catch(()=>{});
+        if (screen.orientation?.lock) screen.orientation.lock('landscape').catch(()=>{});
+    } else { document.exitFullscreen(); }
+}
+
+/* ════════════════════════════════════════════════════════════
+   LocalStorage
+════════════════════════════════════════════════════════════ */
+function saveState() {
+    try {
+        localStorage.setItem('plp_structure', JSON.stringify(blindStructure));
+        localStorage.setItem('plp_entries',   totalEntries);
+        localStorage.setItem('plp_players',   playersRemaining);
+        localStorage.setItem('plp_chips',     document.getElementById('startingChipsInput').value);
+    } catch(e) {}
+}
+function loadState() {
+    try {
+        const s=localStorage.getItem('plp_structure'); if(s) blindStructure=JSON.parse(s);
+        const e=localStorage.getItem('plp_entries');   if(e) totalEntries=parseInt(e);
+        const p=localStorage.getItem('plp_players');   if(p) playersRemaining=parseInt(p);
+        const c=localStorage.getItem('plp_chips');     if(c) document.getElementById('startingChipsInput').value=c;
+    } catch(e) {}
+    timeLeft=blindStructure[currentLevelIndex].time;
+}
+
+/* ════════════════════════════════════════════════════════════
+   音效
+════════════════════════════════════════════════════════════ */
+let audioCtx=null;
+function getAudioCtx() { if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
+function beep(freq,duration,vol) {
+    try {
+        const ctx=getAudioCtx(),o=ctx.createOscillator(),g=ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.frequency.value=freq;
+        g.gain.setValueAtTime(vol,ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+duration);
+        o.start(ctx.currentTime); o.stop(ctx.currentTime+duration);
+    } catch(e) {}
+}
+function playLevelUpSound() { beep(523,0.18,0.3); setTimeout(()=>beep(659,0.18,0.3),200); setTimeout(()=>beep(784,0.35,0.4),400); }
+function playTickSound()    { beep(880,0.08,0.15); }
+
+/* ════════════════════════════════════════════════════════════
+   进度条
+════════════════════════════════════════════════════════════ */
+function updateProgressBar() {
+    const total=blindStructure[currentLevelIndex].time;
+    const pct=total>0?(timeLeft/total)*100:0;
+    const fill=document.getElementById('progressFill');
+    fill.style.width=pct+'%';
+    if (pct<20)      fill.style.background='linear-gradient(90deg,#6B2A10,#C05030,#E8A87C)';
+    else if (pct<40) fill.style.background='linear-gradient(90deg,#7A5A10,#D4A030,#EDD97A)';
+    else             fill.style.background='';
+}
+function updateTimerColor() {
+    const el=document.getElementById('timer');
+    if(el.classList.contains('break-active')) return;
+    el.classList.remove('warn-60','warn-30');
+    if(timeLeft<=30) el.classList.add('warn-30');
+    else if(timeLeft<=60) el.classList.add('warn-60');
+}
+
+/* ════════════════════════════════════════════════════════════
+   初始化
+════════════════════════════════════════════════════════════ */
+function init() {
+    initBroadcastChannel();
+
+    // 恢复主题
+    setTheme(currentTheme);
+
+    if (IS_DISPLAY_MODE) {
+        document.getElementById('controllerView').style.display = 'none';
+        document.getElementById('displayView').style.display    = 'flex';
+        document.body.style.overflow = 'hidden';
+        setTimeout(()=>{
+            if(!IS_IOS){ document.documentElement.requestFullscreen({navigationUI:'hide'}).catch(()=>{}); if(screen.orientation?.lock) screen.orientation.lock('landscape').catch(()=>{}); }
+        }, 500);
+        if(PEER_ROOM_PARAM) initPeerDisplay(PEER_ROOM_PARAM);
+        else { showTVConnected(); document.getElementById('tvConnBadge').className='tv-conn-badge connected'; document.getElementById('tvConnText').textContent='LOCAL'; }
+        return;
+    }
+
+    loadState(); renderLevelList(); updateDisplay(); updateStats();
+}
+
+/* ════════════════════════════════════════════════════════════
+   渲染级别列表（含热力图）
+════════════════════════════════════════════════════════════ */
+function renderLevelList() {
+    const listEl=document.getElementById('levelList');
+    let blindLvlCounter=0;
+    listEl.innerHTML=blindStructure.map((item,index)=>{
+        if(!item.isBreak) blindLvlCounter++;
+        const titleStr   = item.isBreak?'BREAK':`L${blindLvlCounter}`;
+        const contentStr = item.isBreak?'中场休息':`${item.small} / ${item.big}`;
+        const minutesStr = `${Math.floor(item.time/60)}m`;
+        const rel=index-currentLevelIndex;
+        let heatClass='';
+        if(rel<0)       heatClass='past-level';
+        else if(rel===1)heatClass='next-level';
+        else if(rel>2)  heatClass='far-level';
+        return `<div class="level-item ${index===currentLevelIndex?'active':''} ${item.isBreak?'break':''} ${heatClass}" onclick="selectLevel(${index})">
+            <span class="lvl-num">${titleStr}</span>
+            <span class="lvl-blinds">${contentStr}</span>
+            <span class="lvl-time">${minutesStr}</span>
+        </div>`;
+    }).join('');
+    setTimeout(()=>{ const a=listEl.querySelector('.active'); if(a) a.scrollIntoView({block:'nearest',behavior:'smooth'}); },50);
+}
+
+function updateDisplay() {
+    const current=blindStructure[currentLevelIndex];
+    const next=blindStructure[currentLevelIndex+1];
+    const timerEl=document.getElementById('timer');
+
+    const lvlEl = document.getElementById('levelCenter');
+    if(current.isBreak) {
+        document.getElementById('currentBlindsDisplay').innerText='— / —';
+        document.getElementById('currentAnteDisplay').innerText='—';
+        timerEl.classList.add('break-active'); timerEl.classList.remove('warn-60','warn-30');
+        lvlEl.textContent = 'BREAK';
+        lvlEl.className = 'break-mode';
+    } else {
+        let n=0; for(let i=0;i<=currentLevelIndex;i++) if(!blindStructure[i].isBreak) n++;
+        document.getElementById('currentBlindsDisplay').innerText=`${current.small} / ${current.big}`;
+        document.getElementById('currentAnteDisplay').innerText=current.ante;
+        timerEl.classList.remove('break-active');
+        updateTimerColor();
+        lvlEl.textContent = `LEVEL  ${n}`;
+        lvlEl.className = '';
+    }
+
+    document.getElementById('nextBlindsDisplay').innerText=
+        !next?'FINAL STAGE':next.isBreak?'中场休息':`${next.small} / ${next.big}`;
+
+    const mins=Math.floor(timeLeft/60).toString().padStart(2,'0');
+    const secs=(timeLeft%60).toString().padStart(2,'0');
+    timerEl.innerText=`${mins}:${secs}`;
+    updateProgressBar();
+    broadcastState();
+}
+
+function updateStats() {
+    const sc=parseInt(document.getElementById('startingChipsInput').value)||0;
+    const tc=totalEntries*sc, ac=playersRemaining>0?Math.round(tc/playersRemaining):0;
+    document.getElementById('totalEntriesDisplay').innerText=totalEntries;
+    document.getElementById('playersDisplay').innerText=`${playersRemaining} / ${totalEntries}`;
+    document.getElementById('totalChipsDisplay').innerText=tc.toLocaleString();
+    document.getElementById('avgChipsDisplay').innerText=ac.toLocaleString();
+    saveState(); broadcastState();
+}
+
+/* ════════════════════════════════════════════════════════════
+   计时器控制
+════════════════════════════════════════════════════════════ */
+function toggleTimer() {
+    if(timerId) {
+        clearInterval(timerId); timerId=null;
+        document.getElementById('startBtn').innerText='START CLOCK';
+        document.getElementById('startBtn').classList.add('primary');
+    } else {
+        document.getElementById('startBtn').innerText='PAUSE CLOCK';
+        document.getElementById('startBtn').classList.remove('primary');
+        timerId=setInterval(()=>{
+            if(timeLeft>0) {
+                timeLeft--;
+                if(timeLeft<=5&&timeLeft>0) playTickSound();
+                updateDisplay();
             } else {
-                document.exitFullscreen();
-            }
-        }
-
-        // ── TOAST ───────────────────────────────────────────────────
-        function showEndToast() {
-            document.getElementById('endToast').classList.add('show');
-        }
-        function dismissToast() {
-            document.getElementById('endToast').classList.remove('show');
-        }
-
-        // ── PROGRESS BAR ────────────────────────────────────────────
-        function updateProgressBar() {
-            const total = blindStructure[currentLevelIndex].time;
-            const pct = total > 0 ? (timeLeft / total) * 100 : 0;
-            const fill = document.getElementById('progressFill');
-            fill.style.width = pct + '%';
-            // Color shifts as time runs out
-            if (pct < 20) {
-                fill.style.background = 'linear-gradient(90deg, #6B2A10, #C05030, #E8A87C)';
-            } else if (pct < 40) {
-                fill.style.background = 'linear-gradient(90deg, #7A5A10, #D4A030, #EDD97A)';
-            } else {
-                fill.style.background = 'linear-gradient(90deg, #8B6A10, #E5C158, #FFF0A0)';
-            }
-        }
-
-        // ── TIMER WARN COLORS (subtle) ──────────────────────────────
-        function updateTimerColor() {
-            const el = document.getElementById('timer');
-            if (el.classList.contains('break-active')) return;
-            el.classList.remove('warn-60', 'warn-30');
-            if (timeLeft <= 30) el.classList.add('warn-30');
-            else if (timeLeft <= 60) el.classList.add('warn-60');
-        }
-
-        // ── CORE DISPLAY ────────────────────────────────────────────
-        function init() {
-            loadState();
-            renderLevelList();
-            updateDisplay();
-            updateStats();
-        }
-
-        function renderLevelList() {
-            const listEl = document.getElementById('levelList');
-            let blindLvlCounter = 0;
-            listEl.innerHTML = blindStructure.map((item, index) => {
-                if (!item.isBreak) blindLvlCounter++;
-                const titleStr = item.isBreak ? "BREAK" : `L${blindLvlCounter}`;
-                const contentStr = item.isBreak ? "中场休息" : `${item.small} / ${item.big}`;
-                const minutesStr = `${Math.floor(item.time / 60)} Min`;
-                return `
-                    <div class="level-item ${index === currentLevelIndex ? 'active' : ''} ${item.isBreak ? 'break' : ''}" onclick="selectLevel(${index})">
-                        <span class="lvl-num">${titleStr}</span>
-                        <span class="lvl-blinds">${contentStr}</span>
-                        <span class="lvl-time">${minutesStr}</span>
-                    </div>`;
-            }).join('');
-            // Auto scroll to active
-            setTimeout(() => {
-                const active = listEl.querySelector('.active');
-                if (active) active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-            }, 50);
-        }
-
-        function updateDisplay() {
-            const current = blindStructure[currentLevelIndex];
-            const next    = blindStructure[currentLevelIndex + 1];
-            const timerEl = document.getElementById('timer');
-
-            if (current.isBreak) {
-                document.getElementById('levelLabel').innerText = "BREAK TIME";
-                document.getElementById('currentBlindsDisplay').innerText = "休息中";
-                document.getElementById('currentAnteDisplay').innerText = "-";
-                timerEl.classList.add('break-active');
-                timerEl.classList.remove('warn-60', 'warn-30');
-            } else {
-                let n = 0;
-                for (let i = 0; i <= currentLevelIndex; i++) { if (!blindStructure[i].isBreak) n++; }
-                document.getElementById('levelLabel').innerText = `LEVEL ${n}`;
-                document.getElementById('currentBlindsDisplay').innerText = `${current.small} / ${current.big}`;
-                document.getElementById('currentAnteDisplay').innerText = current.ante;
-                timerEl.classList.remove('break-active');
-                updateTimerColor();
-            }
-
-            document.getElementById('nextBlindsDisplay').innerText =
-                !next ? "FINAL STAGE" : next.isBreak ? "中场休息" : `${next.small} / ${next.big}`;
-
-            const mins = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-            const secs = (timeLeft % 60).toString().padStart(2, '0');
-            timerEl.innerText = `${mins}:${secs}`;
-
-            updateProgressBar();
-        }
-
-        function updateStats() {
-            const startingChips = parseInt(document.getElementById('startingChipsInput').value) || 0;
-            const totalChips = totalEntries * startingChips;
-            const avgChips   = playersRemaining > 0 ? Math.round(totalChips / playersRemaining) : 0;
-            document.getElementById('totalEntriesDisplay').innerText  = totalEntries;
-            document.getElementById('playersDisplay').innerText        = `${playersRemaining} / ${totalEntries}`;
-            document.getElementById('totalChipsDisplay').innerText     = totalChips.toLocaleString();
-            document.getElementById('avgChipsDisplay').innerText       = avgChips.toLocaleString();
-            saveState();
-        }
-
-        // ── TIMER CONTROLS ──────────────────────────────────────────
-        function toggleTimer() {
-            if (timerId) {
-                clearInterval(timerId); timerId = null;
-                document.getElementById('startBtn').innerText = 'START CLOCK';
-                document.getElementById('startBtn').classList.add('primary');
-            } else {
-                document.getElementById('startBtn').innerText = 'PAUSE CLOCK';
-                document.getElementById('startBtn').classList.remove('primary');
-                timerId = setInterval(() => {
-                    if (timeLeft > 0) {
-                        timeLeft--;
-                        // Tick sounds
-                        if (timeLeft <= 5 && timeLeft > 0) playTickSound();
-                        updateDisplay();
-                    } else {
-                        if (currentLevelIndex < blindStructure.length - 1) {
-                            playLevelUpSound();
-                            currentLevelIndex++;
-                            timeLeft = blindStructure[currentLevelIndex].time;
-                            renderLevelList();
-                            updateDisplay();
-                        } else {
-                            clearInterval(timerId); timerId = null;
-                            document.getElementById('startBtn').innerText = 'START CLOCK';
-                            document.getElementById('startBtn').classList.add('primary');
-                            showEndToast();
-                        }
-                    }
-                }, 1000);
-            }
-        }
-
-        function resetTimer() {
-            clearInterval(timerId); timerId = null;
-            timeLeft = blindStructure[currentLevelIndex].time;
-            document.getElementById('startBtn').innerText = 'START CLOCK';
-            document.getElementById('startBtn').classList.add('primary');
-            updateDisplay();
-        }
-
-        function nextLevel() {
-            if (currentLevelIndex < blindStructure.length - 1) {
-                playLevelUpSound();
-                currentLevelIndex++; timeLeft = blindStructure[currentLevelIndex].time;
-                renderLevelList(); updateDisplay();
-            }
-        }
-
-        function prevLevel() {
-            if (currentLevelIndex > 0) {
-                currentLevelIndex--; timeLeft = blindStructure[currentLevelIndex].time;
-                renderLevelList(); updateDisplay();
-            }
-        }
-
-        function selectLevel(index) {
-            currentLevelIndex = index; timeLeft = blindStructure[index].time;
-            renderLevelList(); updateDisplay();
-        }
-
-        // ── PLAYER / ENTRY CONTROLS ─────────────────────────────────
-        function adjustTotalEntries(amount) {
-            totalEntries += amount;
-            if (totalEntries < 1) totalEntries = 1;
-            updateStats();
-        }
-
-        function adjustPlayersRemaining(amount) {
-            playersRemaining += amount;
-            if (playersRemaining < 1) playersRemaining = 1;
-            if (playersRemaining > totalEntries) totalEntries = playersRemaining;
-            updateStats();
-        }
-
-        function eliminatePlayer() {
-            if (playersRemaining > 1) { playersRemaining--; updateStats(); }
-        }
-
-        // ── BLIND STRUCTURE EDITOR ──────────────────────────────────
-        function renderModalBlinds() {
-            const container = document.getElementById('modalBlindsList');
-            let counter = 0;
-            container.innerHTML = blindStructure.map((item, index) => {
-                if (!item.isBreak) counter++;
-                const moveControls = `
-                    <div class="btn-action-group">
-                        <button class="btn-move" onclick="moveLevel(${index}, -1)" ${index === 0 ? 'disabled' : ''}>▲ 上移</button>
-                        <button class="btn-move" onclick="moveLevel(${index}, 1)" ${index === blindStructure.length - 1 ? 'disabled' : ''}>▼ 下移</button>
-                    </div>`;
-                if (item.isBreak) {
-                    return `
-                        <div class="modal-level-row break-row">
-                            <span class="modal-row-label">BREAK</span>
-                            <div class="form-group" style="grid-column: span 2;">
-                                <label>休息倒计时时长 (分钟)</label>
-                                <input type="number" value="${Math.floor(item.time / 60)}" oninput="updateBlindData(${index}, 'time', this.value, true)">
-                            </div>
-                            ${moveControls}
-                            <button class="btn-delete-level" onclick="deleteLevel(${index})" title="删除此级别">✕</button>
-                        </div>`;
+                if(currentLevelIndex<blindStructure.length-1) {
+                    playLevelUpSound();
+                    currentLevelIndex++;
+                    timeLeft=blindStructure[currentLevelIndex].time;
+                    renderLevelList(); updateDisplay();
+                    showBlindsUp();
                 } else {
-                    return `
-                        <div class="modal-level-row">
-                            <span class="modal-row-label">L${counter}</span>
-                            <div class="form-group">
-                                <label>Small 小盲</label>
-                                <input type="number" value="${item.small}" oninput="updateBlindData(${index}, 'small', this.value)">
-                            </div>
-                            <div class="form-group">
-                                <label>Big 大盲</label>
-                                <input type="number" value="${item.big}" oninput="updateBlindData(${index}, 'big', this.value)">
-                            </div>
-                            <div class="form-group">
-                                <label>Ante 前注</label>
-                                <input type="number" value="${item.ante}" oninput="updateBlindData(${index}, 'ante', this.value)">
-                            </div>
-                            <div class="form-group">
-                                <label>Time 时长 (分)</label>
-                                <input type="number" value="${Math.floor(item.time / 60)}" oninput="updateBlindData(${index}, 'time', this.value, true)">
-                            </div>
-                            ${moveControls}
-                            <button class="btn-delete-level" onclick="deleteLevel(${index})" title="删除此级别">✕</button>
-                        </div>`;
+                    clearInterval(timerId); timerId=null;
+                    document.getElementById('startBtn').innerText='START CLOCK';
+                    document.getElementById('startBtn').classList.add('primary');
+                    showEndToast();
                 }
-            }).join('');
-        }
-
-        function moveLevel(index, direction) {
-            if (direction === -1 && index > 0) {
-                [blindStructure[index], blindStructure[index-1]] = [blindStructure[index-1], blindStructure[index]];
-                if (currentLevelIndex === index) currentLevelIndex = index - 1;
-                else if (currentLevelIndex === index - 1) currentLevelIndex = index;
-            } else if (direction === 1 && index < blindStructure.length - 1) {
-                [blindStructure[index], blindStructure[index+1]] = [blindStructure[index+1], blindStructure[index]];
-                if (currentLevelIndex === index) currentLevelIndex = index + 1;
-                else if (currentLevelIndex === index + 1) currentLevelIndex = index;
             }
-            saveState();
-            renderModalBlinds(); renderLevelList(); updateDisplay();
-        }
+        },1000);
+    }
+    broadcastState();
+}
 
-        function updateBlindData(index, field, value, isMinutes = false) {
-            let val = parseInt(value) || 0;
-            blindStructure[index][field] = isMinutes ? val * 60 : val;
-            if (index === currentLevelIndex && field === 'time' && !timerId) {
-                timeLeft = blindStructure[index][field];
-            }
-            saveState();
-            renderLevelList(); updateDisplay();
-        }
+function resetTimer() {
+    clearInterval(timerId); timerId=null;
+    timeLeft=blindStructure[currentLevelIndex].time;
+    document.getElementById('startBtn').innerText='START CLOCK';
+    document.getElementById('startBtn').classList.add('primary');
+    updateDisplay();
+}
 
-        function addNewLevel(isBreakMode) {
-            if (isBreakMode) {
-                blindStructure.push({ isBreak: true, small: 0, big: 0, ante: 0, time: 600 });
-            } else {
-                let last = [...blindStructure].reverse().find(x => !x.isBreak) || { small: 100, big: 200, ante: 200, time: 1200 };
-                blindStructure.push({ isBreak: false, small: last.small * 2, big: last.big * 2, ante: last.big * 2, time: last.time });
-            }
-            saveState();
-            renderModalBlinds(); renderLevelList(); updateDisplay();
-        }
+function nextLevel() {
+    if(currentLevelIndex<blindStructure.length-1) {
+        playLevelUpSound(); currentLevelIndex++; timeLeft=blindStructure[currentLevelIndex].time;
+        renderLevelList(); updateDisplay(); showBlindsUp();
+    }
+}
+function prevLevel() {
+    if(currentLevelIndex>0) { currentLevelIndex--; timeLeft=blindStructure[currentLevelIndex].time; renderLevelList(); updateDisplay(); }
+}
+function selectLevel(index) { currentLevelIndex=index; timeLeft=blindStructure[index].time; renderLevelList(); updateDisplay(); }
 
-        function deleteLevel(index) {
-            if (blindStructure.length <= 1) { return; }
-            blindStructure.splice(index, 1);
-            if (currentLevelIndex >= blindStructure.length) currentLevelIndex = blindStructure.length - 1;
-            if (!timerId) timeLeft = blindStructure[currentLevelIndex].time;
-            saveState();
-            renderModalBlinds(); renderLevelList(); updateDisplay();
-        }
+/* ════════════════════════════════════════════════════════════
+   玩家
+════════════════════════════════════════════════════════════ */
+function adjustTotalEntries(n)    { totalEntries+=n; if(totalEntries<1)totalEntries=1; updateStats(); }
+function adjustPlayersRemaining(n){ playersRemaining+=n; if(playersRemaining<1)playersRemaining=1; if(playersRemaining>totalEntries)totalEntries=playersRemaining; updateStats(); }
+function eliminatePlayer()        { if(playersRemaining>1){playersRemaining--;updateStats();} }
 
-        function switchView(view) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('blindsModal').style.display = 'none';
-            if (view === 'main') {
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-            } else if (view === 'blinds') {
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                document.getElementById('blindsModal').style.display = 'flex';
-                renderModalBlinds();
-            }
-        }
+/* ════════════════════════════════════════════════════════════
+   盲注编辑器
+════════════════════════════════════════════════════════════ */
+function renderModalBlinds() {
+    const container=document.getElementById('modalBlindsList');
+    let counter=0;
+    container.innerHTML=blindStructure.map((item,index)=>{
+        if(!item.isBreak) counter++;
+        const mv=`<div class="btn-action-group">
+            <button class="btn-move" onclick="moveLevel(${index},-1)" ${index===0?'disabled':''}>▲</button>
+            <button class="btn-move" onclick="moveLevel(${index},1)"  ${index===blindStructure.length-1?'disabled':''}>▼</button>
+        </div>`;
+        if(item.isBreak) return `<div class="modal-level-row break-row">
+            <span class="modal-row-label">BREAK</span>
+            <div class="form-group" style="grid-column:span 2;"><label>休息时长 (分钟)</label><input type="number" value="${Math.floor(item.time/60)}" oninput="updateBlindData(${index},'time',this.value,true)"></div>
+            ${mv}<button class="btn-delete-level" onclick="deleteLevel(${index})">✕</button></div>`;
+        return `<div class="modal-level-row">
+            <span class="modal-row-label">L${counter}</span>
+            <div class="form-group"><label>Small</label><input type="number" value="${item.small}" oninput="updateBlindData(${index},'small',this.value)"></div>
+            <div class="form-group"><label>Big</label><input type="number" value="${item.big}" oninput="updateBlindData(${index},'big',this.value)"></div>
+            <div class="form-group"><label>Ante</label><input type="number" value="${item.ante}" oninput="updateBlindData(${index},'ante',this.value)"></div>
+            <div class="form-group"><label>Time (min)</label><input type="number" value="${Math.floor(item.time/60)}" oninput="updateBlindData(${index},'time',this.value,true)"></div>
+            ${mv}<button class="btn-delete-level" onclick="deleteLevel(${index})">✕</button></div>`;
+    }).join('');
+}
 
-        function closeModals() {
-            document.getElementById('blindsModal').style.display = 'none';
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-btn')[0].classList.add('active');
-        }
+function moveLevel(index,dir) {
+    if(dir===-1&&index>0){ [blindStructure[index],blindStructure[index-1]]=[blindStructure[index-1],blindStructure[index]]; if(currentLevelIndex===index)currentLevelIndex=index-1; else if(currentLevelIndex===index-1)currentLevelIndex=index; }
+    else if(dir===1&&index<blindStructure.length-1){ [blindStructure[index],blindStructure[index+1]]=[blindStructure[index+1],blindStructure[index]]; if(currentLevelIndex===index)currentLevelIndex=index+1; else if(currentLevelIndex===index+1)currentLevelIndex=index; }
+    saveState(); renderModalBlinds(); renderLevelList(); updateDisplay();
+}
 
-        init();
+function updateBlindData(index,field,value,isMinutes=false) {
+    let val=parseInt(value)||0;
+    blindStructure[index][field]=isMinutes?val*60:val;
+    if(index===currentLevelIndex&&field==='time'&&!timerId) timeLeft=blindStructure[index][field];
+    saveState(); renderLevelList(); updateDisplay();
+}
 
-    </script>
+function addNewLevel(isBreak) {
+    if(isBreak) { blindStructure.push({isBreak:true,small:0,big:0,ante:0,time:600}); }
+    else { let last=[...blindStructure].reverse().find(x=>!x.isBreak)||{small:100,big:200,ante:200,time:1200}; blindStructure.push({isBreak:false,small:last.small*2,big:last.big*2,ante:last.big*2,time:last.time}); }
+    saveState(); renderModalBlinds(); renderLevelList(); updateDisplay();
+}
+
+function deleteLevel(index) {
+    if(blindStructure.length<=1) return;
+    blindStructure.splice(index,1);
+    if(currentLevelIndex>=blindStructure.length) currentLevelIndex=blindStructure.length-1;
+    if(!timerId) timeLeft=blindStructure[currentLevelIndex].time;
+    saveState(); renderModalBlinds(); renderLevelList(); updateDisplay();
+}
+
+function switchView(view) {
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById('blindsModal').style.display='none';
+    if(view==='main') { document.querySelectorAll('.tab-btn')[0].classList.add('active'); }
+    else if(view==='blinds') { document.querySelectorAll('.tab-btn')[1].classList.add('active'); document.getElementById('blindsModal').style.display='flex'; renderModalBlinds(); }
+}
+function closeModals() { document.getElementById('blindsModal').style.display='none'; document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); document.querySelectorAll('.tab-btn')[0].classList.add('active'); }
+
+/* ════════════════════════════════════════════════════════════
+   Toast
+════════════════════════════════════════════════════════════ */
+function showEndToast() { document.getElementById('endToast').classList.add('show'); }
+function dismissToast()  { document.getElementById('endToast').classList.remove('show'); }
+
+/* ════════════════════════════════════════════════════════════
+   启动
+════════════════════════════════════════════════════════════ */
+init();
+</script>
 </body>
 </html>
