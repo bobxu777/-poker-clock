@@ -281,6 +281,169 @@ body.theme-ept .end-toast { background: rgba(237,242,249,0.98); border-color: va
 body.theme-ept .end-toast h2 { color: var(--c-accent); }
 body.theme-ept .end-toast p  { color: var(--text-muted); }
 
+/* ════════════════════════════════════════
+   AKs CLUB 极简大屏主题
+════════════════════════════════════════ */
+body.theme-aks {
+    --c-bg:   #04081A;
+    --c-accent: #E5C158;
+    --c-accent-glow: rgba(229,193,88,0.35);
+}
+body.theme-aks { background-color:#04081A; background-image:
+    radial-gradient(ellipse 80% 55% at 50% -5%,  rgba(18,55,200,0.48) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 45% at 0% 100%,  rgba(10,28,130,0.28) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 45% at 100% 100%,rgba(10,28,130,0.28) 0%, transparent 60%);
+}
+/* 切到 AKs 时隐藏原控制器，显示极简视图 */
+body.theme-aks #controllerView   { display: none !important; }
+body.theme-aks #aksView           { display: flex !important; }
+body.theme-aks #displayView       { display: none !important; }
+body.theme-aks #blindsUpOverlay,
+body.theme-aks #blindsUpFlash     { display: none !important; }
+
+/* AKs 布局 */
+#aksView {
+    display: none;
+    flex-direction: column;
+    height: 100dvh; width: 100vw;
+    position: fixed; inset: 0; z-index: 5;
+}
+
+.aks-top-bar {
+    display:flex; justify-content:space-between; align-items:center;
+    padding: clamp(10px,2vh,22px) clamp(24px,3vw,54px);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    flex-shrink: 0; position:relative; z-index:1;
+}
+.aks-logo { display:flex; flex-direction:column; gap:1px; line-height:1; }
+.aks-logo-main {
+    font-family:'Orbitron',sans-serif;
+    font-size:clamp(18px,2.2vw,34px); font-weight:900; letter-spacing:2px;
+    background:linear-gradient(135deg,#FFD700 0%,#FFF4A0 40%,#E5C158 70%,#FFD700 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    filter:drop-shadow(0 0 8px rgba(255,210,80,0.45));
+}
+.aks-logo-sub {
+    font-size:clamp(9px,1vw,15px); font-weight:700;
+    letter-spacing:clamp(4px,0.7vw,10px); color:rgba(255,255,255,0.4);
+    text-transform:uppercase; padding-left:2px;
+}
+.aks-tournament {
+    font-size:clamp(15px,2vw,30px); font-weight:700; letter-spacing:2px;
+    text-align:center; flex:1; padding:0 20px;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.aks-top-right { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+.aks-clock-label { font-size:clamp(9px,0.9vw,13px); color:rgba(255,255,255,0.4); letter-spacing:1px; }
+.aks-clock-time  { font-family:'Orbitron',sans-serif; font-size:clamp(13px,1.6vw,24px); font-weight:700; letter-spacing:2px; }
+/* AKs 主题切换行 */
+.aks-theme-row { display:flex; gap:4px; }
+.aks-th-btn {
+    background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12);
+    color:rgba(255,255,255,0.45); padding:4px 10px; border-radius:16px;
+    cursor:pointer; font-size:11px; font-weight:700; letter-spacing:1px;
+    transition:all 0.2s;
+}
+.aks-th-btn:hover { background:rgba(255,255,255,0.14); color:#fff; }
+.aks-th-btn.self  { background:linear-gradient(135deg,#FFD700,#E5C158); color:#000; border-color:transparent; }
+
+.aks-main {
+    flex:1; display:grid; grid-template-columns:1fr 2.4fr 1fr;
+    align-items:center;
+    padding:clamp(8px,1.5vh,24px) clamp(24px,3vw,60px);
+    gap:10px; min-height:0; position:relative; z-index:1;
+}
+
+/* 侧列 */
+.aks-side { display:flex; flex-direction:column; gap:clamp(16px,3vh,48px); }
+.aks-side.right { align-items:flex-end; text-align:right; }
+.aks-label {
+    font-size:clamp(10px,1.1vw,16px); color:rgba(255,255,255,0.42);
+    letter-spacing:2px; font-weight:700; display:block; margin-bottom:6px; text-transform:uppercase;
+}
+.aks-big-val {
+    font-family:'Orbitron',sans-serif;
+    font-size:clamp(28px,4.5vw,72px); font-weight:900; line-height:1; color:#fff;
+}
+.aks-big-val.blue { color:#4A9EFF; }
+.aks-mid-val {
+    font-family:'Orbitron',sans-serif;
+    font-size:clamp(18px,2.8vw,46px); font-weight:900; line-height:1;
+    color:rgba(255,255,255,0.5);
+}
+/* 参赛人数 +/- */
+.aks-players-row {
+    display:flex; align-items:center; gap:clamp(10px,1.5vw,20px);
+}
+.aks-adj-btn {
+    width:clamp(32px,3.2vw,50px); height:clamp(32px,3.2vw,50px);
+    background:rgba(74,158,255,0.12); border:1px solid rgba(74,158,255,0.3);
+    color:#4A9EFF; border-radius:50%; font-size:clamp(16px,1.8vw,26px); font-weight:900;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:all 0.15s; user-select:none;
+}
+.aks-adj-btn:hover  { background:rgba(74,158,255,0.25); transform:scale(1.1); }
+.aks-adj-btn:active { transform:scale(0.92); }
+
+/* 中列 */
+.aks-center {
+    display:flex; flex-direction:column; align-items:center;
+    gap:clamp(2px,0.8vh,10px); position:relative;
+}
+.aks-timer-glow {
+    position:absolute; width:70%; height:45%; top:25%; left:15%;
+    background:radial-gradient(ellipse,rgba(74,158,255,0.10) 0%,transparent 70%);
+    pointer-events:none;
+}
+.aks-level-badge {
+    font-family:'Orbitron',sans-serif;
+    font-size:clamp(16px,2.2vw,38px); font-weight:900;
+    color:#4A9EFF; letter-spacing:10px; text-transform:uppercase;
+    text-shadow:0 0 30px rgba(74,158,255,0.45);
+}
+.aks-level-badge.break-mode { color:#00E676; text-shadow:0 0 30px rgba(0,230,118,0.45); }
+
+#aksTimer {
+    font-family:'Orbitron',sans-serif;
+    font-size:clamp(100px,19vw,265px); font-weight:900;
+    color:#fff; letter-spacing:2px; line-height:1;
+    cursor:pointer; transition:color 0.3s; user-select:none;
+    text-shadow:0 0 80px rgba(255,255,255,0.08), 0 4px 30px rgba(0,0,0,0.8);
+}
+#aksTimer.break-mode { color:#00E676; text-shadow:0 0 60px rgba(0,230,118,0.22); }
+#aksTimer.warn60     { color:#EDD97A; }
+#aksTimer.warn30     { color:#FF6B35; text-shadow:0 0 60px rgba(255,107,53,0.3); animation:aksTimerPulse 1s ease-in-out infinite alternate; }
+@keyframes aksTimerPulse { from{opacity:1} to{opacity:0.72} }
+
+.aks-blinds-row {
+    display:flex; align-items:center; gap:clamp(10px,2vw,32px); margin-top:clamp(2px,0.6vh,8px);
+}
+.aks-blind-num { font-family:'Orbitron',sans-serif; font-size:clamp(26px,4.5vw,72px); font-weight:900; color:#E5C158; line-height:1; text-shadow:0 0 20px rgba(229,193,88,0.28); }
+.aks-blind-sep { font-size:clamp(20px,3.2vw,52px); color:rgba(255,255,255,0.18); }
+.aks-blinds-sub { font-size:clamp(9px,0.95vw,13px); color:rgba(255,255,255,0.28); letter-spacing:3px; text-align:center; margin-top:6px; text-transform:uppercase; }
+
+/* 进度条 */
+.aks-progress-wrap { width:100%; height:5px; background:rgba(255,255,255,0.07); flex-shrink:0; position:relative; z-index:1; }
+.aks-progress-fill { height:100%; background:linear-gradient(90deg,#1A4FA0,#4A9EFF,#A0D0FF); transition:width 0.8s linear; }
+
+/* 底栏 */
+.aks-bottom {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:clamp(6px,1.2vh,14px) clamp(24px,3vw,54px);
+    border-top:1px solid rgba(255,255,255,0.05); flex-shrink:0; position:relative; z-index:1;
+}
+.aks-bottom-text { font-size:clamp(9px,0.9vw,13px); color:rgba(255,255,255,0.22); letter-spacing:2px; text-transform:uppercase; }
+
+/* 悬浮控制栏 */
+.aks-ctrl-overlay {
+    position:fixed; bottom:0; left:0; right:0; z-index:50;
+    display:flex; justify-content:center; gap:14px;
+    padding:16px 30px 26px;
+    background:linear-gradient(transparent,rgba(0,0,0,0.75));
+    opacity:0; transition:opacity 0.3s; pointer-events:none;
+}
+.aks-ctrl-overlay.visible { opacity:1; pointer-events:all; }
+
 /* CHAOS scanlines overlay */
 body.theme-chaos::before {
     background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.1) 3px, rgba(0,0,0,0.1) 4px);
@@ -322,6 +485,10 @@ body.theme-chaos .logo-text { animation: chaosText 3s ease infinite; }
 .th-btn[data-theme="chaos"].active   { background: linear-gradient(135deg, #FF00FF, #00FFFF); animation: chaosBtnGlow 2s ease infinite; }
 @keyframes chaosBtnGlow { 0%,100%{box-shadow:0 0 12px #FF00FF;} 50%{box-shadow:0 0 18px #00FFFF;} }
 .th-btn[data-theme="chaos"] { color: #FF00FF; border-color: rgba(255,0,255,0.3); }
+.th-btn[data-theme="aks"].active {
+    background: linear-gradient(135deg, #FFD700 0%, #E5C158 60%, #B89020 100%);
+    color: #000;
+}
 
 .nav-tabs { display: flex; gap: 8px; }
 .tab-btn {
@@ -782,6 +949,7 @@ body.theme-chaos .tv-progress-fill { background:linear-gradient(90deg,#FF00FF,#0
                 <button class="th-btn"        data-theme="ept"    onclick="setTheme('ept')">EPT</button>
                 <button class="th-btn"        data-theme="wpt"    onclick="setTheme('wpt')">WPT</button>
                 <button class="th-btn"        data-theme="chaos"  onclick="setTheme('chaos')">⚡ CHAOS</button>
+                <button class="th-btn"        data-theme="aks"    onclick="setTheme('aks')">AK♠</button>
             </div>
             <div class="nav-tabs">
                 <button class="tab-btn active" onclick="switchView('main')">TV 监控</button>
@@ -890,6 +1058,87 @@ body.theme-chaos .tv-progress-fill { background:linear-gradient(90deg,#FF00FF,#0
 </div>
 
 <!-- ══════════════════════════════════════
+     AKs CLUB 极简大屏视图（第6主题）
+══════════════════════════════════════ -->
+<div id="aksView">
+    <div class="aks-top-bar">
+        <div class="aks-logo">
+            <div class="aks-logo-main">AK<span>♠</span></div>
+            <div class="aks-logo-sub">CLUB</div>
+        </div>
+        <div class="aks-tournament">TOURNAMENT</div>
+        <div class="aks-top-right">
+            <div class="aks-theme-row">
+                <button class="aks-th-btn" onclick="setTheme('wsop')">WSOP</button>
+                <button class="aks-th-btn" onclick="setTheme('triton')">TRITON</button>
+                <button class="aks-th-btn" onclick="setTheme('ept')">EPT</button>
+                <button class="aks-th-btn" onclick="setTheme('wpt')">WPT</button>
+                <button class="aks-th-btn" onclick="setTheme('chaos')">CHAOS</button>
+                <button class="aks-th-btn self">AK♠</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;justify-content:flex-end;">
+                <span class="aks-clock-label">北京时间</span>
+                <span class="aks-clock-time" id="aksRealClock">--:--:--</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="aks-main">
+        <div class="aks-side">
+            <div>
+                <span class="aks-label">参赛人数</span>
+                <div class="aks-players-row">
+                    <button class="aks-adj-btn" onclick="adjustPlayersRemaining(-1)">−</button>
+                    <div class="aks-big-val blue" id="aksPlayersVal">10</div>
+                    <button class="aks-adj-btn" onclick="adjustPlayersRemaining(1)">+</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="aks-center">
+            <div class="aks-timer-glow"></div>
+            <div class="aks-level-badge" id="aksLevelBadge">LEVEL 1</div>
+            <div id="aksTimer" onclick="toggleTimer()">20:00</div>
+            <div>
+                <div class="aks-blinds-row">
+                    <div class="aks-blind-num" id="aksSmall">100</div>
+                    <div class="aks-blind-sep">/</div>
+                    <div class="aks-blind-num" id="aksBig">200</div>
+                </div>
+                <div class="aks-blinds-sub">Small / Big 小大盲</div>
+            </div>
+        </div>
+
+        <div class="aks-side right">
+            <div>
+                <span class="aks-label">下个级别</span>
+                <div class="aks-mid-val" id="aksNext">200/400</div>
+            </div>
+            <div>
+                <span class="aks-label">前注 Ante</span>
+                <div class="aks-big-val" style="font-size:clamp(18px,3vw,50px);" id="aksAnte">200</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="aks-progress-wrap"><div class="aks-progress-fill" id="aksProgress" style="width:100%"></div></div>
+
+    <div class="aks-bottom">
+        <span class="aks-bottom-text">pokerclock.cn</span>
+        <span class="aks-bottom-text" id="aksTotalChips">总筹码 200,000</span>
+    </div>
+
+    <!-- 悬浮控制栏 -->
+    <div class="aks-ctrl-overlay" id="aksCtrlOverlay">
+        <button class="ctrl-btn" onclick="prevLevel()">◀ PREV</button>
+        <button class="ctrl-btn primary" id="aksStartBtn" onclick="toggleTimer()">START CLOCK</button>
+        <button class="ctrl-btn" onclick="resetTimer()">RESET</button>
+        <button class="ctrl-btn" onclick="nextLevel()">NEXT ▶</button>
+        <button class="ctrl-btn" onclick="switchView('blinds')">盲注结构</button>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════
      TV 大屏显示视图
 ══════════════════════════════════════ -->
 <div id="displayView">
@@ -981,18 +1230,92 @@ let currentTheme = localStorage.getItem('plp_theme') || 'wsop';
 
 function setTheme(name) {
     currentTheme = name;
-    // body class
     document.body.className = document.body.className.replace(/theme-\w+/g, '').trim();
     document.body.classList.add('theme-' + name);
-    // theme button highlight
     document.querySelectorAll('.th-btn').forEach(b => {
         b.classList.toggle('active', b.dataset.theme === name);
     });
-    // save
     localStorage.setItem('plp_theme', name);
-    // chaos canvas
     if (name === 'chaos') startChaosCanvas();
     else stopChaosCanvas();
+    // AKs 实时时钟
+    if (name === 'aks') startAksClock();
+    else stopAksClock();
+}
+
+/* ── AKs 北京时钟 ── */
+let aksClockTimer = null;
+function startAksClock() {
+    stopAksClock();
+    function tick() {
+        const n = new Date();
+        const t = `${n.getHours().toString().padStart(2,'0')}:${n.getMinutes().toString().padStart(2,'0')}:${n.getSeconds().toString().padStart(2,'0')}`;
+        const el = document.getElementById('aksRealClock');
+        if (el) el.textContent = t;
+    }
+    tick();
+    aksClockTimer = setInterval(tick, 1000);
+}
+function stopAksClock() { if (aksClockTimer) { clearInterval(aksClockTimer); aksClockTimer = null; } }
+
+/* ── AKs 鼠标悬停控制栏 ── */
+let aksHideTimer = null;
+document.addEventListener('mousemove', () => {
+    if (currentTheme !== 'aks') return;
+    const o = document.getElementById('aksCtrlOverlay');
+    if (o) o.classList.add('visible');
+    clearTimeout(aksHideTimer);
+    aksHideTimer = setTimeout(() => {
+        const o2 = document.getElementById('aksCtrlOverlay');
+        if (o2) o2.classList.remove('visible');
+    }, 3000);
+});
+
+/* ── AKs 显示更新 ── */
+function updateAksDisplay() {
+    if (currentTheme !== 'aks') return;
+    const current = blindStructure[currentLevelIndex];
+    const next    = blindStructure[currentLevelIndex + 1];
+    const timerEl = document.getElementById('aksTimer');
+    const lvlEl   = document.getElementById('aksLevelBadge');
+
+    if (current.isBreak) {
+        lvlEl.textContent = 'BREAK TIME'; lvlEl.className = 'aks-level-badge break-mode';
+        document.getElementById('aksSmall').textContent = '--';
+        document.getElementById('aksBig').textContent   = '--';
+        document.getElementById('aksAnte').textContent  = '--';
+        timerEl.className = 'break-mode';
+    } else {
+        let n = 0; for (let i = 0; i <= currentLevelIndex; i++) if (!blindStructure[i].isBreak) n++;
+        lvlEl.textContent = `LEVEL  ${n}`; lvlEl.className = 'aks-level-badge';
+        document.getElementById('aksSmall').textContent = current.small.toLocaleString();
+        document.getElementById('aksBig').textContent   = current.big.toLocaleString();
+        document.getElementById('aksAnte').textContent  = current.ante.toLocaleString();
+        timerEl.className = timeLeft <= 30 ? 'warn30' : timeLeft <= 60 ? 'warn60' : '';
+    }
+
+    const mins = Math.floor(timeLeft/60).toString().padStart(2,'0');
+    const secs = (timeLeft%60).toString().padStart(2,'0');
+    timerEl.textContent = `${mins}:${secs}`;
+
+    document.getElementById('aksNext').textContent = !next ? 'FINAL'
+        : next.isBreak ? 'BREAK'
+        : `${next.small.toLocaleString()}/${next.big.toLocaleString()}`;
+
+    const pct = blindStructure[currentLevelIndex].time > 0
+        ? (timeLeft / blindStructure[currentLevelIndex].time) * 100 : 0;
+    const fill = document.getElementById('aksProgress');
+    fill.style.width = pct + '%';
+    fill.style.background = pct < 20 ? 'linear-gradient(90deg,#6B1A08,#C03020,#E07050)'
+        : pct < 40 ? 'linear-gradient(90deg,#7A5A10,#D4A030,#EDD97A)'
+        : 'linear-gradient(90deg,#1A4FA0,#4A9EFF,#A0D0FF)';
+
+    document.getElementById('aksPlayersVal').textContent = playersRemaining;
+    const sc = parseInt(document.getElementById('startingChipsInput')?.value) || 20000;
+    document.getElementById('aksTotalChips').textContent = `总筹码 ${(totalEntries * sc).toLocaleString()}`;
+
+    const btn = document.getElementById('aksStartBtn');
+    if (btn) btn.textContent = timerId ? 'PAUSE CLOCK' : 'START CLOCK';
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -1523,6 +1846,7 @@ function updateDisplay() {
     const secs=(timeLeft%60).toString().padStart(2,'0');
     timerEl.innerText=`${mins}:${secs}`;
     updateProgressBar();
+    updateAksDisplay();
     broadcastState();
 }
 
@@ -1533,7 +1857,7 @@ function updateStats() {
     document.getElementById('playersDisplay').innerText=`${playersRemaining} / ${totalEntries}`;
     document.getElementById('totalChipsDisplay').innerText=tc.toLocaleString();
     document.getElementById('avgChipsDisplay').innerText=ac.toLocaleString();
-    saveState(); broadcastState();
+    saveState(); updateAksDisplay(); broadcastState();
 }
 
 /* ════════════════════════════════════════════════════════════
